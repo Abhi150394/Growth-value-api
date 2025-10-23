@@ -4,6 +4,7 @@ from . import views
 from .views import MyTokenObtainPairView, MyTokenRefreshView
 from .views import ShipdayOrdersView,XMLUploadView
 
+
 router = routers.DefaultRouter()
 router.register(r'order', views.OrderViewSet)
 router.register(r'wishlist', views.WishlistViewSet)

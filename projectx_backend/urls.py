@@ -9,5 +9,4 @@ urlpatterns = [
     #lightspeed endpoints
     path("lightspeed/", include("lightspeed_integration.urls")),
 
-
 ]
