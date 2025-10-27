@@ -1,6 +1,15 @@
-# =====================================
-# Django & Python
-# =====================================
+
+# These are some examples of commonly ignored file patterns.
+# You should customize this list as applicable to your project.
+# Learn more about .gitignore:
+#     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+
+# Ignore the database file
+db.sqlite3
+# Ignore .vscode
+.vscode
+# Ignore __pycache__
+>>>>>>> 863e946 (gitignore updated)
 __pycache__/
 *.py[cod]
 *.pyo
@@ -99,4 +108,104 @@ MANIFEST
 .env
 .env
 venv
+<<<<<<< HEAD
 >>>>>>> 0fc1459 (WIP: before switching branches)
+=======
+=======
+# =====================================
+# Django & Python
+# =====================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Byte-compiled / optimized / DLL files
+*.dll
+*.pyc
+*.pyo
+*.pyd
+*.py.class
+
+# Logs and local DB
+*.log
+*.pot
+*.pyc
+db.sqlite3
+*.sqlite3
+
+# =====================================
+# Environment & Virtualenv
+# =====================================
+venv/
+env/
+ENV/
+.venv/
+.env
+.env.*
+*.env
+*.envrc
+
+# =====================================
+# Django specific
+# =====================================
+media/
+staticfiles/
+static_root/
+static_cdn/
+build/
+dist/
+node_modules/
+uploads/
+tmp/
+*.pid
+
+# =====================================
+# IDE / Editor / OS files
+# =====================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+
+# =====================================
+# Pytest / Coverage / Cache
+# =====================================
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+coverage.xml
+
+# =====================================
+# Migrations (Optional)
+# Uncomment below if you want to ignore all migrations
+# (not recommended for production projects)
+# =====================================
+# */migrations/
+# !*/migrations/__init__.py
+
+# =====================================
+# Compiled files / build artifacts
+# =====================================
+*.egg
+*.egg-info/
+.eggs/
+MANIFEST
+*.manifest
+*.spec
+
+# =====================================
+# Backup or temporary files
+# =====================================
+*.bak
+*.tmp
+*.old
+*.orig
+
