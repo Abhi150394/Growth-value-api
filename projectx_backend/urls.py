@@ -5,12 +5,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('backend.urls')),
     path('shopify/', include('shopify_integration.urls')),
-
-    #lightspeed endpoints
     path("lightspeed/", include("lightspeed_integration.urls")),
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 0fc1459 (WIP: before switching branches)
 ]

@@ -60,8 +60,4 @@ class PaymentRequiredMiddleware:
 
         return self.get_response(request)
 
-<<<<<<< HEAD
-# code here
-=======
-# code here
->>>>>>> 0fc1459 (WIP: before switching branches)
+
