@@ -3,10 +3,6 @@ from rest_framework import routers
 from . import views
 from .views import MyTokenObtainPairView, MyTokenRefreshView
 from .views import ShipdayOrdersView,XMLUploadView
-<<<<<<< HEAD
-
-=======
->>>>>>> 0fc1459 (WIP: before switching branches)
 
 router = routers.DefaultRouter()
 router.register(r'order', views.OrderViewSet)

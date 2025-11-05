@@ -223,8 +223,4 @@ class XMLFile(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-<<<<<<< HEAD
         return self.filename
-=======
-        return self.filename
->>>>>>> 0fc1459 (WIP: before switching branches)

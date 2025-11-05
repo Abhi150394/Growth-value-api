@@ -1,10 +1,7 @@
 import re
 from datetime import datetime
 import requests
-<<<<<<< HEAD
 import datetime
-=======
->>>>>>> 0fc1459 (WIP: before switching branches)
 from time import sleep
 from rest_framework import viewsets
 
@@ -798,46 +795,7 @@ class ShipdayOrdersView(APIView):
             return Response(response.json(), status=response.status_code)
         except requests.exceptions.RequestException as e:
             return Response({"error": str(e)}, status=500)
-<<<<<<< HEAD
 
-
-class XMLUploadView(APIView):
-    def post(self, request, *args, **kwargs):
-        xml_file = request.FILES.get('file')
-        if not xml_file:
-            return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # ✅ Create a new filename based on date
-        today_str = datetime.now().strftime("%Y-%m-%d")
-        new_filename = f"dayreport-{today_str}.xml"
-
-        # ✅ Read file content (optional)
-        xml_content = xml_file.read().decode('utf-8')
-
-        # ✅ Reset file pointer (so Django can re-read it)
-        xml_file.seek(0)
-
-        # ✅ Save to database (FileField will handle upload path)
-        xml_record = XMLFile.objects.create(
-            file=xml_file,
-            filename=new_filename,
-            content=xml_content
-        )
-
-        # ✅ Optionally rename the actual stored file
-        xml_record.file.name = f"xml_uploads/{new_filename}"
-        xml_record.save()
-
-        return Response(
-            {
-                'message': 'File uploaded successfully!',
-                'filename': xml_record.filename,
-                'path': xml_record.file.url if xml_record.file else None
-            },
-            status=status.HTTP_201_CREATED
-        )
-=======
->>>>>>> 0fc1459 (WIP: before switching branches)
 
 
 class XMLUploadView(APIView):
