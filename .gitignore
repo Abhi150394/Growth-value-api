@@ -77,6 +77,7 @@ coverage.xml
 # */migrations/
 # !*/migrations/__init__.py
 
+<<<<<<< HEAD
 # =====================================
 # Compiled files / build artifacts
 # =====================================
@@ -94,3 +95,8 @@ MANIFEST
 *.tmp
 *.old
 *.orig
+=======
+.env
+.env
+venv
+>>>>>>> 0fc1459 (WIP: before switching branches)

@@ -9,4 +9,8 @@ urlpatterns = [
     #lightspeed endpoints
     path("lightspeed/", include("lightspeed_integration.urls")),
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0fc1459 (WIP: before switching branches)
 ]
