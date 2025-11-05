@@ -174,6 +174,3 @@ def get_lightspeed_InventoryProductgroupDetails(request):
         return Response(data)
     except Exception as e:
         return Response({"error":str(e)},status=400)
-   
-
-#comment added
