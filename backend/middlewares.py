@@ -24,30 +24,40 @@ class PaymentRequiredMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        
+        # Example cutoff date check
         # if datetime.now() > settings.CUTOFF_DATE:
         #     return HttpResponseForbidden("Something went wrong", status=403)
-        
-        if (str(request.path_info) == '/'):
+
+        # Root path
+        if str(request.path_info) == '/':
             return HttpResponse("Working")
-        
-        if (str(request.path_info).startswith('/admin/')):
+
+        # Allow admin
+        if str(request.path_info).startswith('/admin/'):
             return self.get_response(request)
-        
-        if (request.path_info in ALLOWED_URL_LIST):
+
+        # Allow some URLs without check
+        if request.path_info in ALLOWED_URL_LIST:
             return self.get_response(request)
-        
+
+        # Get DRF user
         drf_request: RestFrameworkRequest = APIView().initialize_request(request)
         user = drf_request.user
 
-        if user.role == "admin" or (request.path_info in [f'/api/users/list/{user.id}/']):
-            return self.get_response(request)
-        
-        check = checkPayment(user.id)
-        paid = check['paid']
-        payment_status = check['payment_status']
-        if not(payment_status == True and paid == True):
-            return HttpResponseForbidden("Payment Required")
+        # ✅ FIX: Handle AnonymousUser safely
+        if user.is_authenticated:
+            if getattr(user, "role", None) == "admin" or (
+                request.path_info == f"/api/users/list/{user.id}/"
+            ):
+                return self.get_response(request)
 
-        response = self.get_response(request)
-        return response
+            # Payment check
+            check = checkPayment(user.id)
+            paid = check.get("paid", False)
+            payment_status = check.get("payment_status", False)
+            if not (payment_status and paid):
+                return HttpResponseForbidden("Payment Required")
+
+        return self.get_response(request)
+
+# code here

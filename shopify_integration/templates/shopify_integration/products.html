@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopify Products</title>
+</head>
+<body>
+    <h1>Shopify Products</h1>
+    <ul>
+{% for product in products %}
+    <li>{{ product.title }} - ${{ product.first_variant_price }}</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>

@@ -214,3 +214,13 @@ class Tag(models.Model):
         return self.name
 
 
+
+
+class XMLFile(models.Model):
+    file = models.FileField(upload_to='xml_uploads/')
+    filename = models.CharField(max_length=255)
+    content = models.TextField(blank=True, null=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.filename
