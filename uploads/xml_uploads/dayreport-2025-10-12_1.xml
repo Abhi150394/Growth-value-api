@@ -1,0 +1,1651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PosiosExport>
+  <DayReport date="2025-10-12" from="1760238000000" to="1760324400000" companyId="44981" companyName="De Frietchalet">
+    <Summary>
+      <Revenues total="1339.40">
+        <Revenue type="delivery" total="796.00"/>
+        <Revenue type="takeaway_simple" total="518.50"/>
+        <Revenue type="takeaway" total="24.90"/>
+      </Revenues>
+      <Payments total="1339.40">
+        <Payment type="Cash" total="175.10"/>
+        <Payment type="Lightspeed Payments" total="343.40"/>
+        <Payment type="Shopify API" total="422.10"/>
+        <Payment type="TAKEAWAY_V2 API" total="398.80"/>
+      </Payments>
+      <Taxes>
+        <Tax type="vat" rate="0" revenueTotal="42.00" vatTotal="0.00"/>
+        <Tax type="vat" rate="6" revenueTotal="1289.90" vatTotal="72.99"/>
+        <Tax type="vat" rate="21" revenueTotal="7.50" vatTotal="1.30"/>
+      </Taxes>
+    </Summary>
+    <CategoryRevenues>
+      <CategoryRevenue id="293782" name="Snacks A-M" amount="126" total="509.70">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="509.70" vatTotal="28.85"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216592" name="Curryworst" amount="11" price="3.00" total="33.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="33.00" vatTotal="1.87"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216719" name="Boulet" amount="9" price="3.20" total="28.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="28.80" vatTotal="1.63"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216719" name="Boulet" amount="7" price="3.60" total="25.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="25.20" vatTotal="1.43"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216592" name="Curryworst" amount="9" price="2.70" total="24.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="24.30" vatTotal="1.38"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216727" name="Frikandel XXL SP" amount="4" price="4.80" total="23.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="23.40" vatTotal="1.32"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216720" name="Curryworst SP" amount="6" price="3.00" total="22.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="22.00" vatTotal="1.25"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216590" name="Bitterballen" amount="6" price="3.50" total="21.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="21.00" vatTotal="1.19"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216591" name="Chixfingers" amount="4" price="4.80" total="19.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="19.20" vatTotal="1.09"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216613" name="Mini loempia" amount="4" price="4.40" total="17.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="17.60" vatTotal="1.00"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216589" name="Grizzly" amount="3" price="5.80" total="17.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="17.40" vatTotal="0.98"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216610" name="Mexicano" amount="4" price="4.20" total="16.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="16.80" vatTotal="0.95"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216588" name="Bamischijf" amount="5" price="3.30" total="16.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="16.50" vatTotal="0.93"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216587" name="Ardeense saté" amount="3" price="4.70" total="14.10">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="14.10" vatTotal="0.80"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216591" name="Chixfingers" amount="3" price="4.40" total="13.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="13.20" vatTotal="0.75"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216603" name="Kippets" amount="3" price="4.40" total="13.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="13.20" vatTotal="0.75"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216590" name="Bitterballen" amount="4" price="3.20" total="12.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.80" vatTotal="0.72"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216608" name="Lookworst" amount="3" price="4.20" total="12.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.60" vatTotal="0.71"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4218997" name="‘t Peird in ’n Pakske" amount="1" price="12.50" total="12.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.50" vatTotal="0.71"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216358" name="Boulet SP" amount="3" price="3.20" total="12.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.40" vatTotal="0.70"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216720" name="Curryworst SP" amount="3" price="2.70" total="12.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.00" vatTotal="0.68"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216589" name="Grizzly" amount="2" price="5.70" total="11.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="11.40" vatTotal="0.65"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216608" name="Lookworst" amount="2" price="4.70" total="9.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="9.40" vatTotal="0.53"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216586" name="Berepoot" amount="2" price="4.20" total="8.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="8.60" vatTotal="0.49"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216598" name="Kaaskroket" amount="2" price="4.00" total="8.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="8.00" vatTotal="0.45"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216610" name="Mexicano" amount="2" price="4.00" total="8.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="8.00" vatTotal="0.45"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216616" name="Mozzarella" amount="2" price="3.90" total="7.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="7.80" vatTotal="0.44"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216721" name="Lookworst SP" amount="1" price="6.00" total="6.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.00" vatTotal="0.34"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216727" name="Frikandel XXL SP" amount="1" price="5.00" total="6.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.00" vatTotal="0.34"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216600" name="Kipsate" amount="1" price="5.80" total="6.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.00" vatTotal="0.34"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216607" name="Loempia" amount="1" price="5.80" total="5.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.80" vatTotal="0.33"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216600" name="Kipsate" amount="1" price="5.20" total="5.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.40" vatTotal="0.31"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216599" name="Kippeboutjes" amount="1" price="5.00" total="5.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.20" vatTotal="0.29"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216593" name="Frikandel XXL" amount="1" price="5.00" total="5.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.00" vatTotal="0.28"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216587" name="Ardeense saté" amount="1" price="4.80" total="4.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.80" vatTotal="0.27"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216603" name="Kippets" amount="1" price="4.80" total="4.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.80" vatTotal="0.27"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4218993" name="Chili cheese nuggets" amount="1" price="4.50" total="4.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.50" vatTotal="0.25"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216594" name="Garnaalkroket" amount="1" price="4.50" total="4.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.50" vatTotal="0.25"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216594" name="Garnaalkroket" amount="1" price="4.20" total="4.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.20" vatTotal="0.24"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216615" name="Mini lucifer" amount="1" price="4.20" total="4.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.20" vatTotal="0.24"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216615" name="Mini lucifer" amount="1" price="4.10" total="4.10">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.10" vatTotal="0.23"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216616" name="Mozzarella" amount="1" price="4.00" total="4.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.00" vatTotal="0.23"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216604" name="Lucifer" amount="1" price="3.90" total="3.90">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.90" vatTotal="0.22"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216358" name="Boulet SP" amount="1" price="3.60" total="3.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.60" vatTotal="0.20"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216595" name="Goulashkroket" amount="1" price="3.30" total="3.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.30" vatTotal="0.19"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216601" name="Kipcorn" amount="1" price="3.20" total="3.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.20" vatTotal="0.18"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293789" name="Frietjes" amount="73" total="301.10">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="301.10" vatTotal="17.04"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216454" name="Klein friet" amount="16" price="3.70" total="59.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="59.20" vatTotal="3.35"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216459" name="Groot friet" amount="6" price="6.00" total="36.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="36.20" vatTotal="2.05"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216461" name="Super friet" amount="4" price="8.50" total="34.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="34.00" vatTotal="1.92"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216454" name="Klein friet" amount="8" price="3.90" total="31.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="31.40" vatTotal="1.78"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216457" name="Middel friet" amount="6" price="4.80" total="29.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="29.00" vatTotal="1.64"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216459" name="Groot friet" amount="4" price="5.70" total="22.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="22.80" vatTotal="1.29"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216461" name="Super friet" amount="2" price="8.70" total="17.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="17.60" vatTotal="1.00"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216434" name="Mini friet" amount="6" price="2.80" total="16.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="16.80" vatTotal="0.95"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216434" name="Mini friet" amount="5" price="3.10" total="15.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="15.50" vatTotal="0.88"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216488" name="Stoofvlees saus" amount="4" price="3.00" total="12.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.00" vatTotal="0.68"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216457" name="Middel friet" amount="2" price="4.50" total="9.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="9.00" vatTotal="0.51"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216527" name="Mayo" amount="5" price="1.30" total="6.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.50" vatTotal="0.37"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4220697" name="Thuislevering" amount="2" price="3.00" total="6.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.00" vatTotal="0.34"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216535" name="Joppi" amount="2" price="1.30" total="2.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.60" vatTotal="0.15"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216540" name="Special saus | TK" amount="1" price="2.50" total="2.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.50" vatTotal="0.14"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293791" name="Snacks N-Z" amount="28" total="124.80">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="124.80" vatTotal="7.06"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216620" name="Saté klein" amount="5" price="4.40" total="22.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="22.60" vatTotal="1.28"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216636" name="Twijfelaar" amount="3" price="6.20" total="18.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="18.60" vatTotal="1.05"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216621" name="Saté groot" amount="2" price="5.30" total="10.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="10.60" vatTotal="0.60"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216622" name="Sitostick" amount="2" price="5.20" total="10.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="10.40" vatTotal="0.59"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216620" name="Saté klein" amount="2" price="4.20" total="8.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="8.80" vatTotal="0.50"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216630" name="Visstick" amount="2" price="4.20" total="8.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="8.40" vatTotal="0.48"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216621" name="Saté groot" amount="1" price="5.90" total="5.90">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.90" vatTotal="0.33"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216726" name="Viandel SP" amount="1" price="3.80" total="4.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.80" vatTotal="0.27"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216624" name="Sweet Chilly" amount="1" price="4.20" total="4.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.20" vatTotal="0.24"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216635" name="Zigeunerstick" amount="1" price="4.20" total="4.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.20" vatTotal="0.24"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216619" name="Ribster" amount="1" price="4.10" total="4.10">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.10" vatTotal="0.23"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216634" name="Vuurvreter" amount="1" price="4.00" total="4.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.00" vatTotal="0.23"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216635" name="Zigeunerstick" amount="1" price="4.00" total="4.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.00" vatTotal="0.23"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216628" name="Viandel" amount="1" price="3.60" total="3.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.60" vatTotal="0.20"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216628" name="Viandel" amount="1" price="3.50" total="3.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.50" vatTotal="0.20"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216632" name="Vleeskroket" amount="1" price="3.50" total="3.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.50" vatTotal="0.20"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216629" name="Viandel Spicy" amount="1" price="3.40" total="3.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="3.40" vatTotal="0.19"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4221350" name="Saté Kr" amount="1" price="0.20" total="0.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="0.20" vatTotal="0.01"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293794" name="Divers" amount="9" total="110.00">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="110.00" vatTotal="6.23"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216670" name="Romboutje" amount="3" price="13.50" total="40.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="40.50" vatTotal="2.29"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216673" name="Friet Bicky" amount="2" price="13.80" total="27.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="27.60" vatTotal="1.56"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216671" name="Julientje" amount="1" price="13.00" total="13.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="13.00" vatTotal="0.74"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216671" name="Julientje" amount="1" price="12.50" total="12.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="12.50" vatTotal="0.71"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216655" name="Kinderbox" amount="1" price="9.70" total="11.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="11.20" vatTotal="0.63"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216652" name="Mosselen" amount="1" price="5.20" total="5.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.20" vatTotal="0.29"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293796" name="Warme sauzen ap" amount="21" total="82.00">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="82.00" vatTotal="4.64"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216558" name="Stoofvlees saus ap" amount="8" price="3.10" total="24.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="24.80" vatTotal="1.40"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216558" name="Stoofvlees saus ap" amount="6" price="3.00" total="18.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="18.00" vatTotal="1.02"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216554" name="Stoofvlees ap" amount="3" price="5.50" total="16.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="16.50" vatTotal="0.93"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216555" name="Balletjes ap" amount="2" price="5.50" total="11.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="11.00" vatTotal="0.62"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216653" name="Paardenworst" amount="1" price="6.20" total="6.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.20" vatTotal="0.35"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216556" name="Goulash ap" amount="1" price="5.50" total="5.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.50" vatTotal="0.31"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293795" name="Burgers" amount="13" total="71.40">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="71.40" vatTotal="4.04"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216647" name="Bicky Cheese" amount="3" price="6.00" total="18.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="18.00" vatTotal="1.02"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216646" name="Bicky wrap" amount="3" price="5.70" total="17.10">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="17.10" vatTotal="0.97"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216638" name="Bicky burger" amount="3" price="5.20" total="15.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="15.60" vatTotal="0.88"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216700" name="Bicky chicken cheeseburger" amount="1" price="6.30" total="6.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="6.30" vatTotal="0.36"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216648" name="cheeseburger" amount="1" price="5.30" total="5.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.30" vatTotal="0.30"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216649" name="Veggi burger" amount="1" price="4.90" total="4.90">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.90" vatTotal="0.28"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216639" name="Hamburger" amount="1" price="4.20" total="4.20">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.20" vatTotal="0.24"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293797" name="Koude sauzen ap" amount="37" total="55.20">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="55.20" vatTotal="3.12"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216567" name="Joppi ap" amount="7" price="1.30" total="10.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="10.00" vatTotal="0.57"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216563" name="Tartaar ap" amount="6" price="1.40" total="8.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="8.40" vatTotal="0.48"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216562" name="Mayo ap" amount="6" price="1.30" total="7.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="7.80" vatTotal="0.44"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216572" name="Special saus | CK" amount="2" price="2.50" total="5.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.00" vatTotal="0.28"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216569" name="Mammoetsaus ap" amount="3" price="1.30" total="4.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.80" vatTotal="0.27"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216566" name="Andalouse ap" amount="2" price="1.30" total="2.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.60" vatTotal="0.15"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216577" name="Samurai ap" amount="2" price="1.30" total="2.60">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.60" vatTotal="0.15"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216573" name="Special saus | TK" amount="1" price="2.50" total="2.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.50" vatTotal="0.14"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216562" name="Mayo ap" amount="1" price="1.50" total="2.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.40" vatTotal="0.14"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216785" name="Gele bickysaus ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216564" name="Tomaten Ketchup ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216568" name="Cocktail ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216571" name="Americain ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216574" name="Frietsaus ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216575" name="Gele curry ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216582" name="Toscaanse saus ap" amount="1" price="1.30" total="1.30">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.30" vatTotal="0.07"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="298707" name="Deliverect" amount="14" total="42.00">
+        <Taxes>
+          <Tax type="vat" rate="0" revenueTotal="42.00" vatTotal="0.00"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4377753" name="Delivery PLU" amount="14" price="3.00" total="42.00">
+            <Taxes>
+              <Tax type="vat" rate="0" revenueTotal="42.00" vatTotal="0.00"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293792" name="Frisdrank" amount="13" total="31.20">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="31.20" vatTotal="1.77"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216659" name="Cola" amount="4" price="2.50" total="10.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="10.00" vatTotal="0.57"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216660" name="Cola Zero" amount="2" price="2.50" total="5.00">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="5.00" vatTotal="0.28"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216659" name="Cola" amount="2" price="2.40" total="4.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.80" vatTotal="0.27"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216664" name="Plat water" amount="2" price="2.20" total="4.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.40" vatTotal="0.25"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216662" name="Ice-Tea" amount="1" price="2.80" total="2.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.80" vatTotal="0.16"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216668" name="Gini" amount="1" price="2.80" total="2.80">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="2.80" vatTotal="0.16"/>
+            </Taxes>
+          </ProductRevenue>
+          <ProductRevenue id="4216666" name="Caprisun" amount="1" price="1.40" total="1.40">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="1.40" vatTotal="0.08"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293793" name="Alcohol" amount="3" total="7.50">
+        <Taxes>
+          <Tax type="vat" rate="21" revenueTotal="7.50" vatTotal="1.30"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216669" name="Jupiler" amount="3" price="2.50" total="7.50">
+            <Taxes>
+              <Tax type="vat" rate="21" revenueTotal="7.50" vatTotal="1.30"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+      <CategoryRevenue id="293808" name="Vegi" amount="1" total="4.50">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="4.50" vatTotal="0.25"/>
+        </Taxes>
+        <ProductRevenues>
+          <ProductRevenue id="4216674" name="Veggie curryworst" amount="1" price="3.50" total="4.50">
+            <Taxes>
+              <Tax type="vat" rate="6" revenueTotal="4.50" vatTotal="0.25"/>
+            </Taxes>
+          </ProductRevenue>
+        </ProductRevenues>
+      </CategoryRevenue>
+    </CategoryRevenues>
+    <Receipts>
+      <Receipt id="433401309" creationTime="1760278054707" total="70.90" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="67.90" vatTotal="3.84"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760278054796" typeId="3" type="Shopify API" amount="70.90">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216461" name="Super friet" amount="1" price="8.70" total="8.90"/>
+          <ReceiptItem productId="4216671" name="Julientje" amount="1" price="13.00" total="13.00"/>
+          <ReceiptItem productId="4216670" name="Romboutje" amount="1" price="13.50" total="13.50"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="3.00" total="4.00"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="3.00" total="4.00"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216610" name="Mexicano" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216566" name="Andalouse ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216620" name="Saté klein" amount="1" price="4.40" total="4.60"/>
+          <ReceiptItem productId="4216622" name="Sitostick" amount="1" price="5.20" total="5.20"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433404326" creationTime="1760278570013" total="30.70" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="30.70" vatTotal="1.74"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760278570072" typeId="3" type="TAKEAWAY_V2 API" amount="30.70">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="2.80" total="2.80"/>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216638" name="Bicky burger" amount="1" price="5.20" total="5.20"/>
+          <ReceiptItem productId="4216563" name="Tartaar ap" amount="1" price="1.40" total="1.40"/>
+          <ReceiptItem productId="4216358" name="Boulet SP" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4216610" name="Mexicano" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216659" name="Cola" amount="1" price="2.50" total="2.50"/>
+          <ReceiptItem productId="4216662" name="Ice-Tea" amount="1" price="2.80" total="2.80"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433412569" creationTime="1760280063986" total="11.40" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="11.40" vatTotal="0.65"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760281677318" typeId="2910" type="Lightspeed Payments" amount="11.40">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216358" name="Boulet SP" amount="1" price="3.20" total="4.50"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433413541" creationTime="1760280251395" total="43.50" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="43.50" vatTotal="2.46"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760280251436" typeId="3" type="TAKEAWAY_V2 API" amount="43.50">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="2" price="2.80" total="5.60"/>
+          <ReceiptItem productId="4216555" name="Balletjes ap" amount="1" price="5.50" total="5.50"/>
+          <ReceiptItem productId="4216646" name="Bicky wrap" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216588" name="Bamischijf" amount="2" price="3.30" total="6.60"/>
+          <ReceiptItem productId="4216634" name="Vuurvreter" amount="1" price="4.00" total="4.00"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="2" price="3.00" total="6.00"/>
+          <ReceiptItem productId="4216571" name="Americain ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216636" name="Twijfelaar" amount="1" price="6.20" total="6.20"/>
+          <ReceiptItem productId="4216566" name="Andalouse ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216574" name="Frietsaus ap" amount="1" price="1.30" total="1.30"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433414667" creationTime="1760280478294" total="27.00" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="24.00" vatTotal="1.36"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760280478324" typeId="3" type="Shopify API" amount="27.00">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216461" name="Super friet" amount="1" price="8.70" total="8.70"/>
+          <ReceiptItem productId="4216668" name="Gini" amount="1" price="2.80" total="2.80"/>
+          <ReceiptItem productId="4216660" name="Cola Zero" amount="2" price="2.50" total="5.00"/>
+          <ReceiptItem productId="4216598" name="Kaaskroket" amount="1" price="4.00" total="4.00"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433415446" creationTime="1760280633135" total="17.50" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="14.50" vatTotal="0.82"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760280633162" typeId="3" type="Shopify API" amount="17.50">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4216628" name="Viandel" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433415850" creationTime="1760280710708" total="60.20" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="60.20" vatTotal="3.41"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760280710760" typeId="3" type="TAKEAWAY_V2 API" amount="60.20">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4220697" name="Thuislevering" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="6.00" total="6.20"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216563" name="Tartaar ap" amount="1" price="1.40" total="1.40"/>
+          <ReceiptItem productId="4216573" name="Special saus | TK" amount="1" price="2.50" total="2.50"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="3.00" total="4.00"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="3.00" total="4.00"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216649" name="Veggi burger" amount="1" price="4.90" total="4.90"/>
+          <ReceiptItem productId="4216638" name="Bicky burger" amount="1" price="5.20" total="5.20"/>
+          <ReceiptItem productId="4216624" name="Sweet Chilly" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216600" name="Kipsate" amount="1" price="5.80" total="6.00"/>
+          <ReceiptItem productId="4216674" name="Veggie curryworst" amount="1" price="3.50" total="4.50"/>
+          <ReceiptItem productId="4216598" name="Kaaskroket" amount="1" price="4.00" total="4.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433415890" creationTime="1760280716689" total="52.50" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="52.50" vatTotal="2.97"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760280716748" typeId="3" type="TAKEAWAY_V2 API" amount="52.50">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216785" name="Gele bickysaus ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216575" name="Gele curry ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216572" name="Special saus | CK" amount="1" price="2.50" total="2.50"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="2" price="3.00" total="6.00"/>
+          <ReceiptItem productId="4216608" name="Lookworst" amount="1" price="4.70" total="4.70"/>
+          <ReceiptItem productId="4216613" name="Mini loempia" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216620" name="Saté klein" amount="2" price="4.40" total="8.80"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="2" price="3.60" total="7.20"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4216589" name="Grizzly" amount="1" price="5.80" total="5.80"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433416178" creationTime="1760280772051" total="16.90" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="13.90" vatTotal="0.79"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760280772075" typeId="3" type="Shopify API" amount="16.90">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216652" name="Mosselen" amount="1" price="5.20" total="5.20"/>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216587" name="Ardeense saté" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433422115" creationTime="1760281967051" total="11.20" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="11.20" vatTotal="0.63"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760282070436" typeId="1" type="Cash" amount="11.20">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216659" name="Cola" amount="1" price="2.40" total="2.40"/>
+          <ReceiptItem productId="4216591" name="Chixfingers" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216603" name="Kippets" amount="1" price="4.40" total="4.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433423718" creationTime="1760282284776" total="17.50" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="17.50" vatTotal="0.99"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760282320411" typeId="1" type="Cash" amount="17.50">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="2" price="3.70" total="7.40"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="1" price="2.70" total="2.70"/>
+          <ReceiptItem productId="4216586" name="Berepoot" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.20" total="3.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433423945" creationTime="1760282332316" total="10.90" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="10.90" vatTotal="0.62"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760282362303" typeId="1" type="Cash" amount="10.90">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="2.70" total="4.00"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.20" total="3.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433425739" creationTime="1760282724727" total="11.50" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="11.50" vatTotal="0.65"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760282769936" typeId="1" type="Cash" amount="11.50">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216563" name="Tartaar ap" amount="1" price="1.40" total="1.40"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.20" total="3.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433426916" creationTime="1760282976655" total="27.10" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="24.10" vatTotal="1.36"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760282976687" typeId="3" type="Shopify API" amount="27.10">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216670" name="Romboutje" amount="1" price="13.50" total="13.50"/>
+          <ReceiptItem productId="4216589" name="Grizzly" amount="1" price="5.80" total="5.80"/>
+          <ReceiptItem productId="4216726" name="Viandel SP" amount="1" price="3.80" total="4.80"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433429589" creationTime="1760283548705" total="7.10" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="7.10" vatTotal="0.40"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760283583051" typeId="1" type="Cash" amount="7.10">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="2.70" total="4.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433429790" creationTime="1760283585409" total="21.70" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="18.70" vatTotal="1.06"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760283585430" typeId="3" type="Shopify API" amount="21.70">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216636" name="Twijfelaar" amount="1" price="6.20" total="6.20"/>
+          <ReceiptItem productId="4218997" name="‘t Peird in ’n Pakske" amount="1" price="12.50" total="12.50"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433430027" creationTime="1760283636630" total="22.70" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="22.70" vatTotal="1.28"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760283705271" typeId="2910" type="Lightspeed Payments" amount="22.70">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="2" price="3.70" total="7.40"/>
+          <ReceiptItem productId="4216639" name="Hamburger" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216591" name="Chixfingers" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216600" name="Kipsate" amount="1" price="5.20" total="5.40"/>
+          <ReceiptItem productId="4216582" name="Toscaanse saus ap" amount="1" price="1.30" total="1.30"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433432496" creationTime="1760284176757" total="8.70" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="8.70" vatTotal="0.49"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760285773802" typeId="1" type="Cash" amount="8.70">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216608" name="Lookworst" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216563" name="Tartaar ap" amount="1" price="1.40" total="1.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433434170" creationTime="1760284552179" total="41.40" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="38.40" vatTotal="2.17"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760284552213" typeId="3" type="Shopify API" amount="41.40">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.50" total="2.40"/>
+          <ReceiptItem productId="4216610" name="Mexicano" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216647" name="Bicky Cheese" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4216607" name="Loempia" amount="1" price="5.80" total="5.80"/>
+          <ReceiptItem productId="4216620" name="Saté klein" amount="1" price="4.20" total="4.40"/>
+          <ReceiptItem productId="4216591" name="Chixfingers" amount="2" price="4.80" total="9.60"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433434621" creationTime="1760284653577" total="16.50" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="13.50" vatTotal="0.76"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760284653613" typeId="3" type="Shopify API" amount="16.50">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216591" name="Chixfingers" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4216603" name="Kippets" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433438508" creationTime="1760285421626" total="42.30" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="39.30" vatTotal="2.22"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760285421675" typeId="3" type="Shopify API" amount="42.30">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="2" price="4.80" total="9.60"/>
+          <ReceiptItem productId="4216673" name="Friet Bicky" amount="1" price="13.80" total="13.80"/>
+          <ReceiptItem productId="4216616" name="Mozzarella" amount="1" price="4.00" total="4.00"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216577" name="Samurai ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4216613" name="Mini loempia" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216563" name="Tartaar ap" amount="1" price="1.40" total="1.40"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433440054" creationTime="1760285715039" total="13.80" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="10.80" vatTotal="0.61"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760285715065" typeId="3" type="Shopify API" amount="13.80">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433440740" creationTime="1760285847242" total="23.70" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="20.70" vatTotal="1.17"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760285847272" typeId="3" type="Shopify API" amount="23.70">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216604" name="Lucifer" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216586" name="Berepoot" amount="1" price="4.20" total="4.40"/>
+          <ReceiptItem productId="4216727" name="Frikandel XXL SP" amount="1" price="5.00" total="6.00"/>
+          <ReceiptItem productId="4216572" name="Special saus | CK" amount="1" price="2.50" total="2.50"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433441299" creationTime="1760285984040" total="34.40" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="34.40" vatTotal="1.95"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760285984072" typeId="3" type="TAKEAWAY_V2 API" amount="34.40">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4220697" name="Thuislevering" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="2" price="3.00" total="6.00"/>
+          <ReceiptItem productId="4216610" name="Mexicano" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216636" name="Twijfelaar" amount="1" price="6.20" total="6.20"/>
+          <ReceiptItem productId="4218993" name="Chili cheese nuggets" amount="1" price="4.50" total="4.50"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433441833" creationTime="1760286094986" total="38.00" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="35.00" vatTotal="1.98"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760286095025" typeId="3" type="Shopify API" amount="38.00">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4216588" name="Bamischijf" amount="1" price="3.30" total="3.30"/>
+          <ReceiptItem productId="4216613" name="Mini loempia" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216622" name="Sitostick" amount="1" price="5.20" total="5.20"/>
+          <ReceiptItem productId="4216608" name="Lookworst" amount="1" price="4.70" total="4.70"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4216621" name="Saté groot" amount="1" price="5.90" total="5.90"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433443598" creationTime="1760286461308" total="42.50" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="42.50" vatTotal="2.41"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760286461338" typeId="3" type="TAKEAWAY_V2 API" amount="42.50">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216655" name="Kinderbox" amount="1" price="9.70" total="11.20"/>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="2.80" total="2.80"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216670" name="Romboutje" amount="1" price="13.50" total="13.50"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4216593" name="Frikandel XXL" amount="1" price="5.00" total="5.00"/>
+          <ReceiptItem productId="4216595" name="Goulashkroket" amount="1" price="3.30" total="3.30"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433444030" creationTime="1760286552301" total="30.90" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="30.90" vatTotal="1.75"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760287120468" typeId="2910" type="Lightspeed Payments" amount="30.90">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216488" name="Stoofvlees saus" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216727" name="Frikandel XXL SP" amount="2" price="4.80" total="12.20"/>
+          <ReceiptItem productId="4216620" name="Saté klein" amount="1" price="4.20" total="4.40"/>
+          <ReceiptItem productId="4216630" name="Visstick" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216563" name="Tartaar ap" amount="1" price="1.40" total="1.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433447110" creationTime="1760287181334" total="4.40" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="4.40" vatTotal="0.25"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760287326848" typeId="1" type="Cash" amount="4.40">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216664" name="Plat water" amount="2" price="2.20" total="4.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433447867" creationTime="1760287329853" total="38.30" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="38.30" vatTotal="2.17"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760287393779" typeId="2910" type="Lightspeed Payments" amount="38.30">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216671" name="Julientje" amount="1" price="12.50" total="12.50"/>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="1" price="4.50" total="4.50"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216589" name="Grizzly" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="1" price="2.70" total="2.70"/>
+          <ReceiptItem productId="4216616" name="Mozzarella" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216647" name="Bicky Cheese" amount="1" price="6.00" total="6.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433449085" creationTime="1760287592308" total="22.60" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="22.60" vatTotal="1.28"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760287612346" typeId="2910" type="Lightspeed Payments" amount="22.60">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216556" name="Goulash ap" amount="1" price="5.50" total="5.50"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="2" price="2.70" total="5.40"/>
+          <ReceiptItem productId="4216610" name="Mexicano" amount="2" price="4.00" total="8.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433449670" creationTime="1760287726798" total="20.20" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="20.20" vatTotal="1.14"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760287762508" typeId="1" type="Cash" amount="20.20">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="2" price="3.20" total="6.40"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="3" price="2.70" total="8.10"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433451079" creationTime="1760288050907" total="34.50" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="34.50" vatTotal="1.95"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760288079253" typeId="1" type="Cash" amount="0.40">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+          <Payment creationTime="1760288094685" typeId="1" type="Cash" amount="34.10">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216461" name="Super friet" amount="3" price="8.50" total="25.50"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="3" price="3.00" total="9.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433453895" creationTime="1760288703299" total="52.30" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="52.30" vatTotal="2.96"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760288806263" typeId="2910" type="Lightspeed Payments" amount="52.30">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216461" name="Super friet" amount="1" price="8.50" total="8.50"/>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216727" name="Frikandel XXL SP" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="2" price="3.20" total="6.40"/>
+          <ReceiptItem productId="4216608" name="Lookworst" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216587" name="Ardeense saté" amount="1" price="4.70" total="4.70"/>
+          <ReceiptItem productId="4216621" name="Saté groot" amount="2" price="5.30" total="10.60"/>
+          <ReceiptItem productId="4216591" name="Chixfingers" amount="1" price="4.40" total="4.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433455636" creationTime="1760289107629" total="13.70" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="11.20" vatTotal="0.63"/>
+          <Tax type="vat" rate="21" revenueTotal="2.50" vatTotal="0.43"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760289148020" typeId="1" type="Cash" amount="13.70">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216488" name="Stoofvlees saus" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216568" name="Cocktail ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216669" name="Jupiler" amount="1" price="2.50" total="2.50"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433456761" creationTime="1760289381801" total="22.80" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="22.80" vatTotal="1.29"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760289498686" typeId="2910" type="Lightspeed Payments" amount="22.80">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216653" name="Paardenworst" amount="1" price="6.20" total="6.20"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="2.70" total="4.00"/>
+          <ReceiptItem productId="4216594" name="Garnaalkroket" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216635" name="Zigeunerstick" amount="1" price="4.00" total="4.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433457727" creationTime="1760289633570" total="10.00" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="10.00" vatTotal="0.57"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760289657410" typeId="1" type="Cash" amount="10.00">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="1" price="4.50" total="4.50"/>
+          <ReceiptItem productId="4216554" name="Stoofvlees ap" amount="1" price="5.50" total="5.50"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433458837" creationTime="1760289915915" total="45.80" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="45.80" vatTotal="2.59"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760289915953" typeId="3" type="TAKEAWAY_V2 API" amount="45.80">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216457" name="Middel friet" amount="1" price="4.80" total="5.00"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="2.20"/>
+          <ReceiptItem productId="4216591" name="Chixfingers" amount="1" price="4.80" total="4.80"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="2" price="3.00" total="6.00"/>
+          <ReceiptItem productId="4216620" name="Saté klein" amount="2" price="4.40" total="9.20"/>
+          <ReceiptItem productId="4216646" name="Bicky wrap" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216638" name="Bicky burger" amount="1" price="5.20" total="5.20"/>
+          <ReceiptItem productId="4216628" name="Viandel" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4216619" name="Ribster" amount="1" price="4.10" total="4.10"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433458871" creationTime="1760289923228" total="27.40" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="27.40" vatTotal="1.55"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760290019297" typeId="2910" type="Lightspeed Payments" amount="27.40">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216616" name="Mozzarella" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216564" name="Tomaten Ketchup ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216599" name="Kippeboutjes" amount="1" price="5.00" total="5.20"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216666" name="Caprisun" amount="1" price="1.40" total="1.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433459495" creationTime="1760290085722" total="24.90" tableName="Takeaway Takeaway">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="24.90" vatTotal="1.41"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760290085758" typeId="3" type="TAKEAWAY_V2 API" amount="24.90">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="3.90"/>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="2.80" total="2.80"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4216567" name="Joppi ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216615" name="Mini lucifer" amount="1" price="4.20" total="4.20"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="2" price="3.00" total="6.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433461202" creationTime="1760290529653" total="38.90" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="35.90" vatTotal="2.03"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760290529685" typeId="3" type="Shopify API" amount="38.90">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216558" name="Stoofvlees saus ap" amount="2" price="3.10" total="6.20"/>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4216588" name="Bamischijf" amount="2" price="3.30" total="6.60"/>
+          <ReceiptItem productId="4216700" name="Bicky chicken cheeseburger" amount="1" price="6.30" total="6.30"/>
+          <ReceiptItem productId="4216569" name="Mammoetsaus ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216632" name="Vleeskroket" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4216721" name="Lookworst SP" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433461698" creationTime="1760290667055" total="5.00" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="21" revenueTotal="5.00" vatTotal="0.87"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760290687392" typeId="2910" type="Lightspeed Payments" amount="5.00">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216669" name="Jupiler" amount="2" price="2.50" total="5.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433461850" creationTime="1760290705077" total="25.40" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="25.40" vatTotal="1.44"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760290811585" typeId="1" type="Cash" amount="25.40">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216535" name="Joppi" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216527" name="Mayo" amount="2" price="1.30" total="2.60"/>
+          <ReceiptItem productId="4216587" name="Ardeense saté" amount="1" price="4.70" total="4.70"/>
+          <ReceiptItem productId="4216615" name="Mini lucifer" amount="1" price="4.10" total="4.10"/>
+          <ReceiptItem productId="4216358" name="Boulet SP" amount="1" price="3.20" total="3.40"/>
+          <ReceiptItem productId="4216629" name="Viandel Spicy" amount="1" price="3.40" total="3.40"/>
+          <ReceiptItem productId="4221350" name="Saté Kr" amount="1" price="0.20" total="0.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433464570" creationTime="1760291497232" total="15.90" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="15.90" vatTotal="0.90"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760291528469" typeId="2910" type="Lightspeed Payments" amount="15.90">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216647" name="Bicky Cheese" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4216589" name="Grizzly" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216630" name="Visstick" amount="1" price="4.20" total="4.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433466196" creationTime="1760292028536" total="17.50" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="17.50" vatTotal="0.99"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760292071356" typeId="2910" type="Lightspeed Payments" amount="17.50">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216554" name="Stoofvlees ap" amount="1" price="5.50" total="5.50"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="1" price="2.70" total="2.70"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216659" name="Cola" amount="1" price="2.40" total="2.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433466691" creationTime="1760292213219" total="26.40" tableName="Shopify Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="23.40" vatTotal="1.32"/>
+          <Tax type="vat" rate="0" revenueTotal="3.00" vatTotal="0.00"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760292213241" typeId="3" type="Shopify API" amount="26.40">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216555" name="Balletjes ap" amount="1" price="5.50" total="5.50"/>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.90" total="4.10"/>
+          <ReceiptItem productId="4216673" name="Friet Bicky" amount="1" price="13.80" total="13.80"/>
+          <ReceiptItem productId="4377753" name="Delivery PLU" amount="1" price="3.00" total="3.00"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433467066" creationTime="1760292349542" total="9.90" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="9.90" vatTotal="0.56"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760292369780" typeId="2910" type="Lightspeed Payments" amount="9.90">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="3.10" total="3.10"/>
+          <ReceiptItem productId="4216554" name="Stoofvlees ap" amount="1" price="5.50" total="5.50"/>
+          <ReceiptItem productId="4216577" name="Samurai ap" amount="1" price="1.30" total="1.30"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433469211" creationTime="1760293156001" total="15.00" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="15.00" vatTotal="0.85"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760293231018" typeId="2910" type="Lightspeed Payments" amount="15.00">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216603" name="Kippets" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216592" name="Curryworst" amount="1" price="2.70" total="2.70"/>
+          <ReceiptItem productId="4216608" name="Lookworst" amount="1" price="4.20" total="4.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433469761" creationTime="1760293372251" total="31.10" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="31.10" vatTotal="1.76"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760293372280" typeId="3" type="TAKEAWAY_V2 API" amount="31.10">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216434" name="Mini friet" amount="1" price="2.80" total="2.80"/>
+          <ReceiptItem productId="4216562" name="Mayo ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216569" name="Mammoetsaus ap" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216648" name="cheeseburger" amount="1" price="5.30" total="5.30"/>
+          <ReceiptItem productId="4216646" name="Bicky wrap" amount="1" price="5.70" total="5.70"/>
+          <ReceiptItem productId="4216594" name="Garnaalkroket" amount="1" price="4.50" total="4.50"/>
+          <ReceiptItem productId="4216589" name="Grizzly" amount="1" price="5.80" total="5.80"/>
+          <ReceiptItem productId="4216613" name="Mini loempia" amount="1" price="4.40" total="4.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433469762" creationTime="1760293372328" total="33.20" tableName="Takeaway Delivery">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="33.20" vatTotal="1.88"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760293372364" typeId="3" type="TAKEAWAY_V2 API" amount="33.20">
+            <CreationUser id="165797" username="apiuser" firstName="API User" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216459" name="Groot friet" amount="1" price="6.00" total="6.00"/>
+          <ReceiptItem productId="4216569" name="Mammoetsaus ap" amount="1" price="1.30" total="2.20"/>
+          <ReceiptItem productId="4216719" name="Boulet" amount="1" price="3.60" total="3.60"/>
+          <ReceiptItem productId="4216601" name="Kipcorn" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216720" name="Curryworst SP" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.50" total="3.50"/>
+          <ReceiptItem productId="4216659" name="Cola" amount="3" price="2.50" total="7.50"/>
+          <ReceiptItem productId="4216635" name="Zigeunerstick" amount="1" price="4.20" total="4.20"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433472651" creationTime="1760294637868" total="39.20" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="39.20" vatTotal="2.22"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760294693225" typeId="2910" type="Lightspeed Payments" amount="39.20">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="3" price="3.70" total="11.10"/>
+          <ReceiptItem productId="4216540" name="Special saus | TK" amount="1" price="2.50" total="2.50"/>
+          <ReceiptItem productId="4216527" name="Mayo" amount="2" price="1.30" total="2.60"/>
+          <ReceiptItem productId="4216535" name="Joppi" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216488" name="Stoofvlees saus" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216603" name="Kippets" amount="1" price="4.40" total="4.40"/>
+          <ReceiptItem productId="4216587" name="Ardeense saté" amount="1" price="4.70" total="4.70"/>
+          <ReceiptItem productId="4216590" name="Bitterballen" amount="1" price="3.20" total="3.20"/>
+          <ReceiptItem productId="4216727" name="Frikandel XXL SP" amount="1" price="4.80" total="6.40"/>
+        </ReceiptItems>
+      </Receipt>
+      <Receipt id="433472839" creationTime="1760294737112" total="12.50" tableName="Afhaal">
+        <Taxes>
+          <Tax type="vat" rate="6" revenueTotal="12.50" vatTotal="0.71"/>
+        </Taxes>
+        <Payments>
+          <Payment creationTime="1760294749305" typeId="2910" type="Lightspeed Payments" amount="12.50">
+            <CreationUser id="160717" username="Ober" firstName="" lastName=""/>
+          </Payment>
+        </Payments>
+        <ReceiptItems>
+          <ReceiptItem productId="4216454" name="Klein friet" amount="1" price="3.70" total="3.70"/>
+          <ReceiptItem productId="4216488" name="Stoofvlees saus" amount="1" price="3.00" total="3.00"/>
+          <ReceiptItem productId="4216527" name="Mayo" amount="1" price="1.30" total="1.30"/>
+          <ReceiptItem productId="4216358" name="Boulet SP" amount="1" price="3.20" total="4.50"/>
+        </ReceiptItems>
+      </Receipt>
+    </Receipts>
+  </DayReport>
+</PosiosExport>

@@ -60,4 +60,3 @@ class PaymentRequiredMiddleware:
 
         return self.get_response(request)
 
-# code here
