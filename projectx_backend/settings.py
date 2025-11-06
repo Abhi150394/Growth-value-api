@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shopify_integration',
+    'lightspeed_integration',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,9 @@ LIGHTSPEED = {
     "AUTHORIZE_URL": os.getenv("LIGHTSPEED_AUTHORIZE_URL"),
     "TOKEN_URL": os.getenv("LIGHTSPEED_TOKEN_URL"),
     "BASE_API_URL": os.getenv("LIGHTSPEED_BASE_API_URL"),
+    "CODE_CHALLENGE_METHOD": "S256",
+    "LOGIN_ID": os.getenv("LIGHTSPEED_LOGIN_ID"),
+    "PASSWORD": os.getenv("LIGHTSPEED_LOGIN_PASSWORD"),
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -144,4 +148,3 @@ SHIPDAY_AUTH_HEADER = os.getenv("SHIPDAY_AUTH_HEADER")
 SHOPIFY_STORE_NAME = os.getenv("SHOPIFY_STORE_NAME")
 SHOPIFY_ACCESS_TOKEN = os.getenv("SHOPIFY_ACCESS_TOKEN")
 SHOPIFY_API_VERSION = os.getenv("SHOPIFY_API_VERSION")
-
