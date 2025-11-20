@@ -1,6 +1,6 @@
 # views.py
 from django.http import JsonResponse
-from .shopify_api import get_products, get_orders, get_customers, get_single_product,get_routes,get_reports
+from .shopify_api import get_products, get_orders, get_customers, get_single_product,get_routes,get_reports,get_inventory
 
 def products_view(request):
     data = get_products()
@@ -24,4 +24,8 @@ def all_routes(request):
 
 def reports_view(request):
     data=get_reports()
+    return JsonResponse(data)
+
+def inventory_view(request):
+    data=get_inventory()
     return JsonResponse(data)

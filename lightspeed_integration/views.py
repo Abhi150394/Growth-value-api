@@ -123,8 +123,27 @@ def get_lightspeed_companyById(request,company_id):
 @api_view(["GET"])
 def get_lightspeed_financeReceipt(request):
     try:
-        data=lightspeed_get("financial/receipt/?date=2025-10-22")
+        from_date = request.query_params.get("from_date")
+        to_date = request.query_params.get("to_date")
+
+        # ✅ Build URL dynamically
+        url = "financial/receipt/"
+        params = []
+
+        if from_date:
+            params.append(f"from={from_date}")
+        if to_date:
+            params.append(f"to={to_date}")
+
+        if params:
+            url += "?" + "&".join(params)
+
+        data = lightspeed_get(url)
         return Response(data)
+        # data=lightspeed_get("financial/receipt/?date=2025-10-22")
+        # data=lightspeed_get("financial/receipt/?from=2025-11-10&to=2025-11-17")
+        #  "error": "Lightspeed API Error: 400 - {\"code\":\"1401\",\"description\":\"You can only query receipt for a maximum range of 7 days\"}"
+        # return Response(data)
     except Exception as e:
         return Response({"error":str(e)},status=400)
     

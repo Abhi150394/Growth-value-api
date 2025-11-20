@@ -1,7 +1,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
@@ -119,7 +119,15 @@ def scrape_givana():
                                     break
                             price = product_element.find('span', class_='price').text.strip()
                             price = price[2:]
-                            price = Decimal(price.replace(".","").replace(",", "."))
+                            
+                            try:
+                                price = Decimal(price.replace(".", "").replace(",", "."))
+                            except (InvalidOperation, ValueError):
+                                price = Decimal("0")
+                                
+                            # if isinstance(price, str) :
+                            #     price = 0.00
+                            # price = Decimal(price.replace(".","").replace(",", "."))
 
                             # Create a dictionary with the extracted data
                             product_info = {

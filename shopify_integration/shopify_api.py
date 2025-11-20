@@ -41,3 +41,8 @@ def get_routes():
     url = f"https://{settings.SHOPIFY_STORE_NAME}/admin/oauth/access_scopes.json"
     r = requests.get(url, headers=HEADERS)
     return r.json()
+
+def get_inventory():
+    url= f"{BASE_URL}/read_inventory.json"
+    r=requests.get(url,headers=HEADERS)
+    return r.json()

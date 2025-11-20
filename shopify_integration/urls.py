@@ -8,5 +8,6 @@ urlpatterns = [
     path('products/<int:product_id>/', views.single_product_view, name='shopify_product_detail'),
     path('routes/',views.all_routes,name='shopify_all_routes'),
     path('reports/',views.reports_view,name='shopify_reports'),
+    path('inventory/',views.inventory_view,name='shopify_inventory')
 
 ]

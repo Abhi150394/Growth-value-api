@@ -1,6 +1,7 @@
 from .scripts.snacksbosteels_new import scrape_snacksbosteels
 from .helpers.export import create_file
-from .scripts.bellimmo import scrape_bellimmo
+# from .scripts.bellimmo import scrape_bellimmo
+from .scripts.bellimmo_new import scrape_bellimmo
 from .scripts.givana import scrape_givana
 from .scripts.snacksdeal import scrape_snackdeals
 from .scripts.frituurland import scrape_frituurland
@@ -120,6 +121,7 @@ def call_scrape_snacksbosteels():
     # create_file(items[0], items[1])
     scraper = Scraper.objects.get(id=1)
     scraper.last_scraped = date.today()
+    scraper.scraped="Yes"
     scraper.save()
     Products.objects.filter(scraper=scraper).delete()
     for i in items[1]:
@@ -148,6 +150,10 @@ def call_scrape_givana():
     # create_file(items[0], items[1])
     scraper = Scraper.objects.get(id=3)
     scraper.last_scraped = date.today()
+    if len(items[1])>0:
+        scraper.scraped="Yes"
+    else:
+        scraper.scraped="No"
     scraper.save()
     Products.objects.filter(scraper=scraper).delete()
     for i in items[1]:
@@ -157,7 +163,8 @@ def call_scrape_givana():
         product_price = i['price']
         product_brand = find_matching_item(product_name, brand_bosteels)
         product_vendor = "Givana"
-        relative = Decimal(format(product_price/extract_quantity(product_name), '.2f'))
+        # relative = Decimal(format(product_price/extract_quantity(product_name), '.2f'))
+        relative =0
         Products.objects.create(
             product_name=product_name,
             link=product_link,
@@ -176,6 +183,10 @@ def call_scrape_snacksdeal():
     # create_file(items[0], items[1])
     scraper = Scraper.objects.get(id=4)
     scraper.last_scraped = date.today()
+    if len(items[1])>0:
+        scraper.scraped="Yes"
+    else:
+        scraper.scraped="No"
     scraper.save()
     Products.objects.filter(scraper=scraper).delete()
     for i in items[1]:
@@ -204,6 +215,10 @@ def call_scrape_frituurland():
     # create_file(items[0], items[1])
     scraper = Scraper.objects.get(id=5)
     scraper.last_scraped = date.today()
+    if len(items[1])>0:
+        scraper.scraped="Yes"
+    else:
+        scraper.scraped="No"
     scraper.save()
     Products.objects.filter(scraper=scraper).delete()
     for i in items[1]:
