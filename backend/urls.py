@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 from . import views
 from .views import MyTokenObtainPairView, MyTokenRefreshView
-from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView
+from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterEmployeeShiftsView
 
 router = routers.DefaultRouter()
 router.register(r'order', views.OrderViewSet)
@@ -46,5 +46,7 @@ urlpatterns = [
     path('token/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
     path("shipday/orders/", ShipdayOrdersView.as_view(), name="shipday-orders"),
     path("shyfter/employees/", ShyfterEmployeesView.as_view(), name="shyfter-employees"),
+    path("shyfter/employees/<str:employee_id>/clockings/", ShyfterEmployeeClockingsView.as_view()),
+    path("shyfter/employees/<str:employee_id>/shifts/", ShyfterEmployeeShiftsView.as_view()),
     path('upload-xml/', XMLUploadView.as_view(), name='upload-xml')
 ]

@@ -20,7 +20,7 @@ def lightspeed_auth(request):
 def get_lightspeed_orders(request):
     """Example: Fetch orders."""
     try:
-        data = lightspeed_get("onlineordering/order")
+        data = lightspeed_get("onlineordering/order?page=1&pageSize=1000")
         return Response(data)
     except Exception as e:
         return Response({"error": str(e)}, status=400)

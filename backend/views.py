@@ -803,9 +803,46 @@ class ShyfterEmployeesView(APIView):
             "Shyfter-Department": "zVJk0KP2O45e3LZO"
         }
         try:
-            response=requests.get(settings.SHYFTER_API_URL,headers=headers)
+            response=requests.get(f"{settings.SHYFTER_API_URL}/employees",headers=headers)
             response.raise_for_status()  # raise error if request failed
             return Response(response.json(), status=response.status_code)
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=500)
+
+
+class ShyfterEmployeeClockingsView(APIView):
+    def get(self, request, employee_id):
+        headers = {
+            "Authorization": f"Bearer {settings.SHYFTER_AUTHORIZATION_TOKEN}",
+            "Accept": "application/json",
+            "Shyfter-Department": "zVJk0KP2O45e3LZO"
+        }
+
+        try:
+            url = f"{settings.SHYFTER_API_URL}/employees/{employee_id}/clockings"
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+
+            return Response(response.json(), status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=500)
+
+class ShyfterEmployeeShiftsView(APIView):
+    def get(self, request, employee_id):
+        headers = {
+            "Authorization": f"Bearer {settings.SHYFTER_AUTHORIZATION_TOKEN}",
+            "Accept": "application/json",
+            "Shyfter-Department": "zVJk0KP2O45e3LZO"
+        }
+
+        try:
+            url = f"{settings.SHYFTER_API_URL}/employees/{employee_id}/shifts"
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+
+            return Response(response.json(), status=response.status_code)
+
         except requests.exceptions.RequestException as e:
             return Response({"error": str(e)}, status=500)
 
