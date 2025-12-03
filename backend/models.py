@@ -32,12 +32,22 @@ class UserManager(BaseUserManager):
 
 
 class UserData(AbstractUser):
+    class Roles(models.TextChoices):
+        SUPERADMIN = 'superadmin', 'Super Admin'
+        ADMIN = 'admin', 'Admin'
+        BUSINESS_LEADER = 'business_leader', 'Business Leader'
+        REGIONAL_MANAGER = 'regional_manager', 'Regional Manager'
+        MANAGER = 'manager', 'Manager'
+        VENDOR = 'vendor', 'Vendor'
+        USER = 'user', 'User'
+        
     username = None
     name = models.CharField("Name", max_length=100)
     paid = models.BooleanField(default=False)
     payment_status = models.BooleanField(default=False)
     customer_id = models.CharField(max_length=200, default='', blank=True, null=True)
-    role = models.CharField("Role", max_length=36, default="user")
+    # role = models.CharField("Role", max_length=36, default="user")
+    role = models.CharField(max_length=36, choices=Roles.choices, default=Roles.USER)
     phone = models.CharField('Phone', max_length=20, unique=True)
     dob = models.DateField("Date of Birth", null=True, blank=True)
     gender = models.CharField(max_length=12, null=True, blank=True)
@@ -86,6 +96,21 @@ class UserData(AbstractUser):
         if tags:
             self.tags.set(tags)
         return self
+    
+    def set_admin(self):
+        return self.role in {self.Roles.SUPERADMIN, self.Roles.ADMIN}
+    
+    def set_business_leader(self):
+        return self.role == self.Roles.BUSINESS_LEADER
+    
+    def set_regional_manager(self):
+        return self.role == self.Roles.REGIONAL_MANAGER
+    
+    def set_manager(self):
+        return self.role == self.Roles.MANAGER
+    
+    def set_user(self):
+        return self.role == self.Roles.USER
     
     def set_vendors(self, vendors_data=[]):
         try:

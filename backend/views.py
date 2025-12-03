@@ -43,6 +43,8 @@ import logging
 import os
 from dotenv import load_dotenv
 
+from backend.permissions import IsAdminRole, IsOwnerOrAdmin, ADMIN_ROLES, BUSINESS_LEADER_ROLES, REGIONAL_MANAGER_ROLES
+
 load_dotenv()  # loads variables from .env into environment
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
@@ -153,68 +155,62 @@ def register(request):
         return Response(data={"error":exc.args}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([IsAdminRole])
 def list_users(request):
-    if(request.user.role == 'admin'):
-        queryset = UserData.objects.filter(is_deleted=False).order_by(
-            'id')
-        serializer = UserListSerializer(queryset, many=True)
-        return Response(serializer.data)
-    return Response("You don't have access!", status=status.HTTP_403_FORBIDDEN)
+    queryset = UserData.objects.filter(is_deleted=False).order_by('id')
+    serializer = UserListSerializer(queryset, many=True)
+    return Response(serializer.data)
 
 @api_view(['PATCH'])
+@permission_classes([IsOwnerOrAdmin])
 def update_users(request, id):
-    if(request.user.role == 'admin' or request.user.id == id):
-        incoming = dict(request.data)
-        if not(request.user.role == 'admin'):
-            try:
-                incoming.pop('role')
-            except:
-                pass
+    incoming = dict(request.data)
+    admin_roles = {UserData.Roles.ADMIN, UserData.Roles.SUPERADMIN}
+    if request.user.role not in admin_roles:
+        incoming.pop('role', None)
 
-        try:
-            instance = UserData.objects.filter(is_deleted=False).get(id=id)
-        except Exception as ex:
-            return Response(str(ex), status=status.HTTP_404_NOT_FOUND)
-        serializer = UserSerializer(instance, data=incoming, many=isinstance(incoming, list),
-                            partial=True)
-        if not serializer.is_valid():
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        data = dict(serializer.data)
-        data.pop('password')
-        return Response(data)
-    return Response("You don't have access!", status=status.HTTP_403_FORBIDDEN)
+    try:
+        instance = UserData.objects.filter(is_deleted=False).get(id=id)
+    except Exception as ex:
+        return Response(str(ex), status=status.HTTP_404_NOT_FOUND)
+    serializer = UserSerializer(instance, data=incoming, many=isinstance(incoming, list),
+                        partial=True)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer.save()
+    data = dict(serializer.data)
+    data.pop('password')
+    return Response(data)
 
 @api_view(['GET'])
+@permission_classes([IsOwnerOrAdmin])
 def get_user(request, id):
-    if(request.user.role == 'admin' or request.user.id == id):
-        try:
-            instance = UserData.objects.filter(is_deleted=False).get(id=id)
-            serializer = UserListSerializer(instance)
-            response = serializer.data
-        except:
-            response = {"detail":"User not found"}
-        return Response(response)
-    return Response("You don't have access!", status=status.HTTP_403_FORBIDDEN)
+    try:
+        instance = UserData.objects.filter(is_deleted=False).get(id=id)
+        serializer = UserListSerializer(instance)
+        response = serializer.data
+    except:
+        response = {"detail":"User not found"}
+    return Response(response)
 
 @api_view(['GET'])
+@permission_classes([IsAdminRole])
 def delete_users(request, id):
-    if(request.user.role == 'admin'):
-        try:
-            data = UserData.objects.get(id=id)
-            data.is_deleted = True
-            data.save()
-            response = "User Deleted Successfully!"
-        except Exception as ex:
-            response = str(ex)
-        
-        return Response({"detail":response})
-    return Response("You don't have access!", status=status.HTTP_403_FORBIDDEN)
+    try:
+        data = UserData.objects.get(id=id)
+        data.is_deleted = True
+        data.save()
+        response = "User Deleted Successfully!"
+    except Exception as ex:
+        response = str(ex)
+    
+    return Response({"detail":response})
 
 def checkPayment(user_id):
     user = UserData.objects.get(id=user_id)
     
-    if user.role == "admin":
+    # Exempt admin, superadmin, business leader, and regional manager from payment checks
+    if user.role in ADMIN_ROLES | {UserData.Roles.BUSINESS_LEADER, UserData.Roles.REGIONAL_MANAGER}:
         return {"paid":True, "payment_status":True}
     
     customer_id = user.customer_id
@@ -225,10 +221,11 @@ def checkPayment(user_id):
         user.paid = True
         user.save()
     except Exception as ex:
-        user.paid = False
-        user.payment_status = False
+        # intenntially make all false true for testing purpose
+        user.paid = False            #False
+        user.payment_status = False  #False
         user.save()
-        return {"paid": False, "payment_status": False}
+        return {"paid": False, "payment_status": False}       #False
     
     if status == "active" or status == "trialing" or status == "canceled":
         user.payment_status = True
@@ -672,45 +669,43 @@ class DashboardView(APIView):
         return paginator.get_paginated_response(response_data)
 
 class AdminDashboardView(APIView):
-    
+    permission_classes = [IsAdminRole]
+
     def get(self, request):
-        if request.user.role == 'admin':
-            subscriptions = stripe.Subscription.list()
-            user_qs = UserData.objects.filter(is_deleted=False).prefetch_related("tags", "vendors")
-            tabs = {'users':user_qs.count()}
-            tabs['totalSubscriptions'] = len(subscriptions.data)
-            table = []
-            total_price = 0
-            for i in subscriptions.data:
-                customer = stripe.Customer.retrieve(str(i['customer'])).email
-                uc = user_qs.filter(email=customer).first()
-                tags, vendors = None, None
-                if uc:
-                    tags = uc.tags.all()
-                    vendors = uc.vendors.all()
-                duration = i['items']['data'][0]['plan']['interval']
-                product = stripe.Product.retrieve(i['items']['data'][0]['plan']['product'])
-                type = product['name']
-                total_price = total_price + (i['items']['data'][0]['plan']['amount']/100)
-                resp = {
-                    'user':customer,
-                    'type':type, 
-                    'status':i['status'],
-                    'duration':duration,
-                    "tags": [],
-                    "vendors": []
-                }
-                if tags:
-                    resp["tags"]= [t.name for t in uc.tags.iterator()]
-                if vendors:
-                    resp["vendors"]= [v.name for v in uc.vendors.iterator()]
-                
-                table.append(resp)
+        subscriptions = stripe.Subscription.list()
+        user_qs = UserData.objects.filter(is_deleted=False).prefetch_related("tags", "vendors")
+        tabs = {'users':user_qs.count()}
+        tabs['totalSubscriptions'] = len(subscriptions.data)
+        table = []
+        total_price = 0
+        for i in subscriptions.data:
+            customer = stripe.Customer.retrieve(str(i['customer'])).email
+            uc = user_qs.filter(email=customer).first()
+            tags, vendors = None, None
+            if uc:
+                tags = uc.tags.all()
+                vendors = uc.vendors.all()
+            duration = i['items']['data'][0]['plan']['interval']
+            product = stripe.Product.retrieve(i['items']['data'][0]['plan']['product'])
+            type = product['name']
+            total_price = total_price + (i['items']['data'][0]['plan']['amount']/100)
+            resp = {
+                'user':customer,
+                'type':type, 
+                'status':i['status'],
+                'duration':duration,
+                "tags": [],
+                "vendors": []
+            }
+            if tags:
+                resp["tags"]= [t.name for t in uc.tags.iterator()]
+            if vendors:
+                resp["vendors"]= [v.name for v in uc.vendors.iterator()]
             
-            tabs['subscriptionAmount'] = total_price
-            return Response({'tabs':tabs,'table':table})
-            
-        return Response("You don't have access!", status=status.HTTP_403_FORBIDDEN)
+            table.append(resp)
+        
+        tabs['subscriptionAmount'] = total_price
+        return Response({'tabs':tabs,'table':table})
 
 #Funtion Based APIs
 @api_view(['GET'])
@@ -736,46 +731,40 @@ def wish_list(request):
 #     return Response(data.data)
 
 @api_view(['GET'])
+@permission_classes([IsAdminRole])
 def list_scrapers(request):
-    if request.user.role == "admin":
-        scraper = Scraper.objects.filter(is_deleted=False)
-        data = ScraperSerializer(instance=scraper, many=True)
-        return Response(data.data)
-    return Response("You don't have access!", status=status.HTTP_403_FORBIDDEN)
+    scraper = Scraper.objects.filter(is_deleted=False)
+    data = ScraperSerializer(instance=scraper, many=True)
+    return Response(data.data)
 
 
 @api_view(['GET'])
+@permission_classes([IsAdminRole])
 def start_scrape(request, id):
-    if request.user.role == "admin":
-        try:
-            if id == 1:
-                thread = threading.Thread(target=call_scrape_snacksbosteels)
-                thread.start()
-            elif id == 2:
-                thread = threading.Thread(target=call_scrape_bellimmo)
-                thread.start()
-            elif id == 3:
-                thread = threading.Thread(target=call_scrape_givana)
-                thread.start()
-
-            elif id == 4:
-                thread = threading.Thread(target=call_scrape_snacksdeal)
-                thread.start()
-
-            elif id == 5:
-                thread = threading.Thread(target=call_scrape_frituurland)
-                thread.start()
-            
-            elif id == 6:
-                thread = threading.Thread(target=call_scrape_foodnl)
-                thread.start()
-            else:
-                return Response({'message': 'Scraper not found!'}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as exc:
-            _logger.error(f"Unable to scrap. Error: {exc}")
-            return Response({'message': 'Something went wrong.'}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({'message': 'User not allowed to scrape!'}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        if id == 1:
+            thread = threading.Thread(target=call_scrape_snacksbosteels)
+            thread.start()
+        elif id == 2:
+            thread = threading.Thread(target=call_scrape_bellimmo)
+            thread.start()
+        elif id == 3:
+            thread = threading.Thread(target=call_scrape_givana)
+            thread.start()
+        elif id == 4:
+            thread = threading.Thread(target=call_scrape_snacksdeal)
+            thread.start()
+        elif id == 5:
+            thread = threading.Thread(target=call_scrape_frituurland)
+            thread.start()
+        elif id == 6:
+            thread = threading.Thread(target=call_scrape_foodnl)
+            thread.start()
+        else:
+            return Response({'message': 'Scraper not found!'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as exc:
+        _logger.error(f"Unable to scrap. Error: {exc}")
+        return Response({'message': 'Something went wrong.'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'message': 'Scrape Started'}, status=status.HTTP_202_ACCEPTED)
 
@@ -783,8 +772,9 @@ def start_scrape(request, id):
 
 class ShipdayOrdersView(APIView):
     def get(self, request):
+        location = request.GET.get("location") or "Frietchalet"
         headers = {
-            "Authorization": settings.SHIPDAY_AUTH_HEADER,
+            "Authorization": settings.SHIPDAY_AUTH_HEADER_CREDENTIALS[location],
             "Content-Type": "application/json"
         }
 

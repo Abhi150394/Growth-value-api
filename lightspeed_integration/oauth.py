@@ -1,4 +1,3 @@
-
 import base64
 import hashlib
 import os
@@ -19,7 +18,7 @@ def generate_code_verifier_and_challenge():
     return verifier, challenge
 
 
-def get_authorization_code():
+def get_authorization_code(location):
     """Simulates login and retrieves the authorization code."""
     verifier, challenge = generate_code_verifier_and_challenge()
 
@@ -52,8 +51,11 @@ def get_authorization_code():
     action_url = urljoin(response.url, form.get("action"))
     payload = {i.get("name"): i.get("value", "") for i in form.find_all("input") if i.get("name")}
 
-    payload["userId"] = settings.LIGHTSPEED["LOGIN_ID"]
-    payload["password"] = settings.LIGHTSPEED["PASSWORD"]
+    # payload["userId"] = settings.LIGHTSPEED["LOGIN_ID"]
+    # payload["password"] = settings.LIGHTSPEED["PASSWORD"]
+    
+    payload["userId"]   = settings.LIGHTSPEED["LOGIN_CREDENTIALS"][location]["id"]
+    payload["password"] = settings.LIGHTSPEED["LOGIN_CREDENTIALS"][location]["password"]
 
     login_resp = session.post(action_url, data=payload, allow_redirects=True)
     soup = BeautifulSoup(login_resp.text, "html.parser")

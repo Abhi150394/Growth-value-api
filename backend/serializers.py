@@ -227,7 +227,9 @@ class UserListSerializer(serializers.ModelSerializer):
             "a_address",
             "a_country",
             "a_zip",
-            "date_joined"
+            "date_joined",
+            'paid',
+            'payment_status'
         ]
         
 class PaymentSerializer(serializers.ModelSerializer):

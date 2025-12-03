@@ -5,6 +5,8 @@ from .views import checkPayment
 from rest_framework.request import Request as RestFrameworkRequest
 from rest_framework.views import APIView
 from django.http import HttpResponseForbidden, HttpResponse
+from backend.models import UserData
+from backend.permissions import ADMIN_ROLES
 
 ALLOWED_URL_LIST = [
     '/api/demo/',
@@ -46,7 +48,10 @@ class PaymentRequiredMiddleware:
 
         # ✅ FIX: Handle AnonymousUser safely
         if user.is_authenticated:
-            if getattr(user, "role", None) == "admin" or (
+            user_role = getattr(user, "role", None)
+            # Allow admin roles, business leaders, and regional managers to bypass payment check
+            exempt_roles = ADMIN_ROLES | {UserData.Roles.BUSINESS_LEADER, UserData.Roles.REGIONAL_MANAGER}
+            if user_role in exempt_roles or (
                 request.path_info == f"/api/users/list/{user.id}/"
             ):
                 return self.get_response(request)
@@ -55,8 +60,10 @@ class PaymentRequiredMiddleware:
             check = checkPayment(user.id)
             paid = check.get("paid", False)
             payment_status = check.get("payment_status", False)
-            if not (payment_status and paid):
-                return HttpResponseForbidden("Payment Required")
+            # if not (payment_status and paid):
+            #     return HttpResponseForbidden("Payment Required")
+            return self.get_response(request)
+            
 
         return self.get_response(request)
 

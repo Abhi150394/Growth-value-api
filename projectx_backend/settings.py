@@ -4,7 +4,7 @@ Django settings for projectx_backend project.
 
 from datetime import datetime, timedelta
 from pathlib import Path
-import os
+import os, json
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -108,6 +108,7 @@ LIGHTSPEED = {
     "CODE_CHALLENGE_METHOD": "S256",
     "LOGIN_ID": os.getenv("LIGHTSPEED_LOGIN_ID"),
     "PASSWORD": os.getenv("LIGHTSPEED_LOGIN_PASSWORD"),
+    "LOGIN_CREDENTIALS": json.loads(os.getenv("LIGHTSPEED_LOGIN_CREDENTIALS"))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -127,6 +128,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'backend.UserData'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 CUTOFF_DATE = datetime(2024, 7, 22, 23, 59, 59)
 
@@ -149,6 +155,7 @@ SHYFTER_AUTHORIZATION_TOKEN=os.getenv("SHYFTER_AUTHORIZATION_TOKEN")
 
 SHIPDAY_API_URL = os.getenv("SHIPDAY_API_URL")
 SHIPDAY_AUTH_HEADER = os.getenv("SHIPDAY_AUTH_HEADER")
+SHIPDAY_AUTH_HEADER_CREDENTIALS=json.loads(os.getenv("SHIPDAY_AUTH_HEADER_CREDENTIAL"))
 
 SHOPIFY_STORE_NAME = os.getenv("SHOPIFY_STORE_NAME")
 SHOPIFY_ACCESS_TOKEN = os.getenv("SHOPIFY_ACCESS_TOKEN")

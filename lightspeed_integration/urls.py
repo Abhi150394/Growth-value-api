@@ -9,7 +9,7 @@ urlpatterns = [
     path("orders/", views.get_lightspeed_orders, name="lightspeed_orders"),
     path("orders/<order_id>",views.get_lightspeed_orderById,name="lightspeed_orderById"),
 
-    #
+    #client 
     path("customers/",views.get_lightspeed_customer,name="lightspeed_customers"),
 
     #Product Sales

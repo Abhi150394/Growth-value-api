@@ -4,6 +4,7 @@ import time
 import requests
 from .oauth import refresh_access_token
 from django.conf import settings
+from datetime import datetime, timedelta
 
 
 
@@ -47,6 +48,7 @@ def lightspeed_get(endpoint, params=None):
     }
 
     url = f"{BASE_URL}/{endpoint.lstrip('/')}"
+    print(url,params)
     response = requests.get(url, headers=headers, params=params)
 
     # Handle expired token during request
@@ -61,3 +63,50 @@ def lightspeed_get(endpoint, params=None):
         return response.json()
     else:
         raise Exception(f"Lightspeed API Error: {response.status_code} - {response.text}")
+
+
+
+# def summarize_orders_by_date(orders):
+#     result = {}
+
+#     for order in orders:
+#         # Extract only YYYY-MM-DD part from ISO Date
+#         date_key = order["creationDate"].split("T")[0]
+
+#         if date_key not in result:
+#             result[date_key] = {
+#                 "totalAmount": 0,
+#                 "itemsCount": 0
+#             }
+
+#         result[date_key]["totalAmount"] += order.get("total", 0)
+#         result[date_key]["itemsCount"] += len(order.get("items", []))
+
+#     return result
+
+
+
+def summarize_orders_by_date(orders, from_date, to_date):
+    # Convert input strings to date objects if needed
+    if isinstance(from_date, str):
+        from_date = datetime.strptime(from_date, "%Y-%m-%d").date()
+    if isinstance(to_date, str):
+        to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
+
+    result = {}
+
+    # ---- Create default structure for entire date range ----
+    current = from_date
+    while current <= to_date:
+        result[str(current)] = {"totalAmount": 0, "itemsCount": 0}
+        current += timedelta(days=1)
+
+    # ---- Fill values based on orders ----
+    for order in orders:
+        date_key = order["creationDate"].split("T")[0]  # "YYYY-MM-DD"
+
+        if date_key in result:
+            result[date_key]["totalAmount"] += order.get("total", 0)
+            result[date_key]["itemsCount"] += len(order.get("items", []))
+
+    return result
