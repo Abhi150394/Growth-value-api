@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from . import views
-from .views import MyTokenObtainPairView, MyTokenRefreshView
+from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView
 from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterEmployeeShiftsView
 
 router = routers.DefaultRouter()
@@ -45,6 +45,7 @@ urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
     path("shipday/orders/", ShipdayOrdersView.as_view(), name="shipday-orders"),
+    path("shipday/orders/<str:ordernumber>/",ShipdayOrdersDetailsView.as_view(),name="shipday-orders-details"),
     path("shyfter/employees/", ShyfterEmployeesView.as_view(), name="shyfter-employees"),
     path("shyfter/employees/<str:employee_id>/clockings/", ShyfterEmployeeClockingsView.as_view()),
     path("shyfter/employees/<str:employee_id>/shifts/", ShyfterEmployeeShiftsView.as_view()),

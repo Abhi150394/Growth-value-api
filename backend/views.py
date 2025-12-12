@@ -775,38 +775,109 @@ class ShipdayOrdersView(APIView):
         location = request.GET.get("location") or "Frietchalet"
         headers = {
             "Authorization": settings.SHIPDAY_AUTH_HEADER_CREDENTIALS[location],
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         try:
-            response = requests.get(settings.SHIPDAY_API_URL, headers=headers)
+            response = requests.get(f"{settings.SHIPDAY_API_URL}orders", headers=headers)
             response.raise_for_status()  # raise error if request failed
             return Response(response.json(), status=response.status_code)
         except requests.exceptions.RequestException as e:
             return Response({"error": str(e)}, status=500)
 
-class ShyfterEmployeesView(APIView):
-    def get(self,request):
-        headers={
-            "Authorization": f"Bearer {settings.SHYFTER_AUTHORIZATION_TOKEN}",
-            "Accept": "application/json",
-            "Shyfter-Department": "zVJk0KP2O45e3LZO"
+class ShipdayOrdersDetailsView(APIView):
+    def get(self, request,ordernumber):
+        location = request.GET.get("location") or "Frietchalet"
+        
+        headers = {
+            "Authorization": settings.SHIPDAY_AUTH_HEADER_CREDENTIALS[location],
+            "Content-Type": "application/json",
         }
+
         try:
-            response=requests.get(f"{settings.SHYFTER_API_URL}/employees",headers=headers)
+            response = requests.get(f"{settings.SHIPDAY_API_URL}orders/{ordernumber}", headers=headers)
             response.raise_for_status()  # raise error if request failed
             return Response(response.json(), status=response.status_code)
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=500)
+
+
+
+def _get_shyfter_headers(location: str = "Frietchalet") -> dict:
+    """
+    Build Shyfter headers for the given location.
+
+    Supports both:
+      - New per-location credentials via SHYFTER_AUTHORIZATION_CREDENTIALS (mapping)
+      - Old single-token setup via SHYFTER_AUTHORIZATION_TOKEN (backward compatible)
+
+    Expected SHYFTER_AUTHORIZATION_CREDENTIALS structure (per location):
+        {
+            "Frietchalet": {
+                "token": "<bearer_token>",
+                "department": "<department_id>"
+            },
+            "Tipzakske": { ... },
+            "Frietbooster": { ... }
+        }
+
+    If a location is missing or credentials are incomplete, this safely falls
+    back to the legacy env values.
+    """
+    default_department = "zVJk0KP2O45e3LZO"
+    token = getattr(settings, "SHYFTER_AUTHORIZATION_TOKEN", None)
+    department = default_department
+
+    creds_by_location = getattr(settings, "SHYFTER_AUTHORIZATION_CREDENTIALS", None)
+    if isinstance(creds_by_location, dict):
+        creds = creds_by_location.get(location)
+        if isinstance(creds, dict):
+            token = creds.get("token") or token
+            department = creds.get("Shyfter-Department") or default_department
+        elif isinstance(creds, str):
+            # If value is just a token string, keep default department
+            token = creds or token
+
+    headers = {
+        "Accept": "application/json",
+        "Shyfter-Department": department,
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    return headers
+
+
+class ShyfterEmployeesView(APIView):
+    def get(self, request):
+        location = request.GET.get("location") or "Frietchalet"
+        headers = _get_shyfter_headers(location)
+
+        all_employees = []
+        next_url = f"{settings.SHYFTER_API_URL}/employees"  # first page URL
+
+        try:
+            while next_url:  # keep fetching until 'next' is null
+                res = requests.get(next_url, headers=headers)
+                res.raise_for_status()
+                data = res.json()
+
+                # append current page data
+                all_employees.extend(data.get("data", []))
+
+                # update next_url for next iteration
+                next_url = data.get("links", {}).get("next")  
+
+            return Response({"employees": all_employees}, status=200)
+
         except requests.exceptions.RequestException as e:
             return Response({"error": str(e)}, status=500)
 
 
 class ShyfterEmployeeClockingsView(APIView):
     def get(self, request, employee_id):
-        headers = {
-            "Authorization": f"Bearer {settings.SHYFTER_AUTHORIZATION_TOKEN}",
-            "Accept": "application/json",
-            "Shyfter-Department": "zVJk0KP2O45e3LZO"
-        }
+        location = request.GET.get("location") or "Frietchalet"
+        headers = _get_shyfter_headers(location)
 
         try:
             url = f"{settings.SHYFTER_API_URL}/employees/{employee_id}/clockings"
@@ -818,13 +889,11 @@ class ShyfterEmployeeClockingsView(APIView):
         except requests.exceptions.RequestException as e:
             return Response({"error": str(e)}, status=500)
 
+
 class ShyfterEmployeeShiftsView(APIView):
     def get(self, request, employee_id):
-        headers = {
-            "Authorization": f"Bearer {settings.SHYFTER_AUTHORIZATION_TOKEN}",
-            "Accept": "application/json",
-            "Shyfter-Department": "zVJk0KP2O45e3LZO"
-        }
+        location = request.GET.get("location") or "Frietchalet"
+        headers = _get_shyfter_headers(location)
 
         try:
             url = f"{settings.SHYFTER_API_URL}/employees/{employee_id}/shifts"
