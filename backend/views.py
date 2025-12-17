@@ -775,6 +775,7 @@ class ShipdayOrdersView(APIView):
         location = request.GET.get("location") or "Frietchalet"
         headers = {
             "Authorization": settings.SHIPDAY_AUTH_HEADER_CREDENTIALS[location],
+            # "PARTNER-API-KEY": settings.SHIPDAY_AUTH_HEADER_CREDENTIALS[location],
             "Content-Type": "application/json",
         }
 

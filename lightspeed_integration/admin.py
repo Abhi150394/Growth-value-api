@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LightspeedOrder
+from .models import LightspeedOrder, LightspeedProduct
 
 
 @admin.register(LightspeedOrder)
@@ -40,6 +40,63 @@ class LightspeedOrderAdmin(admin.ModelAdmin):
         }),
         ('Order Content', {
             'fields': ('order_items', 'order_payments', 'order_tax_info', 'note', 'number_of_customers')
+        }),
+        ('Metadata', {
+            'fields': ('raw_data', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(LightspeedProduct)
+class LightspeedProductAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'name',
+        'sku',
+        'visible',
+        'price',
+        'stock_amount',
+        'stock_management_enabled',
+        'created_at',
+    )
+    list_filter = (
+        'visible',
+        'stock_management_enabled',
+        'product_type',
+        'created_at',
+    )
+    search_fields = (
+        'id',
+        'name',
+        'sku',
+        'info',
+    )
+    readonly_fields = ('id', 'created_at', 'updated_at', 'raw_data')
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Product Information', {
+            'fields': ('id', 'name', 'sku', 'visible', 'product_type')
+        }),
+        ('Pricing', {
+            'fields': (
+                'price', 'price_without_vat',
+                'takeaway_price', 'takeaway_price_without_vat',
+                'delivery_price', 'delivery_price_without_vat'
+            )
+        }),
+        ('Tax Information', {
+            'fields': ('tax_class', 'delivery_tax_class', 'takeaway_tax_class')
+        }),
+        ('Stock', {
+            'fields': ('stock_amount', 'stock_management_enabled')
+        }),
+        ('Images', {
+            'fields': ('image_location', 'kitchen_image_location', 'cfd_image_location')
+        }),
+        ('Product Content', {
+            'fields': ('group_ids', 'additions', 'info')
         }),
         ('Metadata', {
             'fields': ('raw_data', 'created_at', 'updated_at'),

@@ -71,11 +71,23 @@ def get_reports(location="Frietchalet"):
     r = requests.get(url, headers=_get_shopify_headers(location))
     return r.json()
 
-def get_orders(location="Frietchalet"):
+def get_orders(url,location="Frietchalet"):
     """Get orders from Shopify for a specific location."""
-    url = f"{_get_base_url(location)}/orders.json?limit=250"
-    r = requests.get(url, headers=_get_shopify_headers(location))
-    return r.json()
+    data = requests.get(url, headers=_get_shopify_headers(location))
+    
+    # Get JSON data from response
+    response_data = data.json()
+    
+    # Get links from headers (if available)
+    links = data.links
+    
+    # Combine data and links into response
+    response = {
+        'data': response_data,
+        'links': links
+    }
+    
+    return response
 
 def get_customers(location="Frietchalet"):
     """Get customers from Shopify for a specific location."""

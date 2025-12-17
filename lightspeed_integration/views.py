@@ -10,9 +10,9 @@ from django.utils.dateparse import parse_datetime
 
 from lightspeed_integration.oauth import LightspeedAuth
 from .services import lightspeed_get, summarize_orders_by_date
-from .models import LightspeedOrder
-from .serializers import LightspeedOrderSerializer
-
+from .models import LightspeedOrder, LightspeedProduct
+from .serializers import LightspeedOrderSerializer, LightspeedProductSerializer
+import time
 logger = logging.getLogger(__name__)
 
 
@@ -69,13 +69,15 @@ class OrdersView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, *_, **__):
+        start = time.time()
         try:
             all_orders = []
             limit = 100   # Lightspeed default page size
             offset = 0
 
             # Fetch all orders from Lightspeed API
-            while offset <= 500:
+            while True:
+                time.sleep(0.4)
                 endpoint = f"onlineordering/order?offset={offset}&amount={limit}"
                 chunk = lightspeed_get(endpoint)
 
@@ -113,17 +115,23 @@ class OrdersView(APIView):
                     skipped_count += 1
                     logger.warning("Skipping order with missing ID: %s", order_data)
                     continue
+                # Skip if already saved
+                existing = LightspeedOrder.objects.filter(id=order_id).first()
+                if existing:
+                    skipped_count += 1
+                    continue
                 
                 try:
                     # Try to fetch full detail for this order so items/payments are captured
                     try:
+                        print(f"Fetching data for ID : {order_id}")
+                        time.sleep(0.4)
                         detail_payload = lightspeed_get(f"onlineordering/order/{order_id}")
                         if isinstance(detail_payload, dict):
                             order_data = detail_payload
                     except Exception as detail_exc:
                         detail_failures += 1
                         logger.warning("Detail fetch failed for order %s: %s", order_id, detail_exc)
-
                     # Map API data to model fields
                     defaults = _map_order_to_model_fields(order_data)
                     
@@ -140,7 +148,9 @@ class OrdersView(APIView):
 
             # # Serialize saved orders
             serializer = LightspeedOrderSerializer(saved_orders, many=True)
-            
+            end = time.time()
+            duration = end - start
+            print("Total tiem taken in getting order",duration)
             return Response({
                 "total_fetched": len(all_orders),
                 "total_saved": len(saved_orders),
@@ -192,6 +202,48 @@ def _map_order_to_model_fields(order_data: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _map_product_to_model_fields(product_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Map Lightspeed API product data to LightspeedProduct model fields.
+    Handles missing/null values gracefully.
+    """
+    def safe_decimal(value):
+        """Safely convert value to Decimal, return None if invalid."""
+        if value is None or value == "":
+            return None
+        try:
+            from decimal import Decimal
+            return Decimal(str(value))
+        except (ValueError, TypeError):
+            logger.warning("Failed to parse decimal: %s", value)
+            return None
+    
+    return {
+        "name": product_data.get("name"),
+        "visible": bool(product_data.get("visible", True)),
+        "image_location": product_data.get("imageLocation"),
+        "kitchen_image_location": product_data.get("kitchenImageLocation"),
+        "cfd_image_location": product_data.get("cfdImageLocation"),
+        "price": safe_decimal(product_data.get("price")),
+        "price_without_vat": safe_decimal(product_data.get("priceWithoutVat")),
+        "takeaway_price": safe_decimal(product_data.get("takeawayPrice")),
+        "takeaway_price_without_vat": safe_decimal(product_data.get("takeawayPriceWithoutVat")),
+        "delivery_price": safe_decimal(product_data.get("deliveryPrice")),
+        "delivery_price_without_vat": safe_decimal(product_data.get("deliveryPriceWithoutVat")),
+        "product_type": product_data.get("productType"),
+        "sku": product_data.get("sku"),
+        "tax_class": product_data.get("taxClass"),
+        "delivery_tax_class": product_data.get("deliveryTaxClass"),
+        "takeaway_tax_class": product_data.get("takeawayTaxClass"),
+        "stock_amount": product_data.get("stockAmount", 0) or 0,
+        "stock_management_enabled": bool(product_data.get("stockManagementEnabled", False)),
+        "group_ids": product_data.get("groupIds", []),
+        "additions": product_data.get("additions", []),
+        "info": product_data.get("info"),
+        "raw_data": product_data,
+    }
+
+
 
 class OrderDetailView(APIView):
     """Fetch a single order by ID."""
@@ -216,26 +268,103 @@ class OrderDetailView(APIView):
 
 # --------------------- Products --------------------- #
 class ProductsView(APIView):
-    """Fetch products."""
+    """Fetch ALL Lightspeed products, save them to local DB (preventing duplicates), and return saved products."""
     permission_classes = (AllowAny,)
 
     def get(self, request, *_, **__):
+        start = time.time()
         try:
-            data = lightspeed_get("inventory/product")
-            return Response(data, status=status.HTTP_200_OK)
+            all_products = []
+            limit = 100   # Lightspeed default page size
+            offset = 0
+
+            # Fetch all products from Lightspeed API
+            while True:
+                endpoint = f"inventory/product?offset={offset}&amount={limit}"
+                chunk = lightspeed_get(endpoint)
+
+                # Handle different response formats
+                if isinstance(chunk, dict):
+                    # If response is a dict with 'results' key
+                    results = chunk.get("results", [])
+                    if not results or len(results) == 0:
+                        break
+                    all_products.extend(results)
+                elif isinstance(chunk, list):
+                    # If response is directly a list
+                    if len(chunk) == 0:
+                        break
+                    all_products.extend(chunk)
+                else:
+                    # Unexpected format, break
+                    break
+
+                # Move to next page
+                offset += limit
+
+            # Save products to database (prevent duplicates by using product ID as primary key)
+            saved_products = []
+            skipped_count = 0
+            
+            for product_data in all_products:
+                if not isinstance(product_data, dict):
+                    skipped_count += 1
+                    continue
+                
+                product_id = product_data.get("id")
+                if product_id is None:
+                    skipped_count += 1
+                    logger.warning("Skipping product with missing ID: %s", product_data)
+                    continue
+                
+                try:
+                    # Map API data to model fields
+                    defaults = _map_product_to_model_fields(product_data)
+                    
+                    # Use update_or_create to prevent duplicates (id is primary key)
+                    product_obj, created = LightspeedProduct.objects.update_or_create(
+                        id=product_id,
+                        defaults=defaults
+                    )
+                    saved_products.append(product_obj)
+                except Exception as e:
+                    logger.error("Error saving product %s: %s", product_id, str(e))
+                    skipped_count += 1
+                    continue
+
+            # Serialize saved products
+            serializer = LightspeedProductSerializer(saved_products, many=True)
+            end = time.time()
+            duration = end - start
+            print("Total time taken in getting products", duration)
+            return Response({
+                "total_fetched": len(all_products),
+                "total_saved": len(saved_products),
+                "skipped": skipped_count,
+                "products": serializer.data,
+            }, status=status.HTTP_200_OK)
+
         except Exception as exc:
-            logger.exception("Error fetching products")
+            logger.exception("Error fetching lightspeed products")
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductDetailView(APIView):
-    """Fetch a product by ID."""
+    """Fetch a single product by ID and save it to local DB."""
     permission_classes = (AllowAny,)
 
     def get(self, request, product_id: str, *_, **__):
         try:
             data = lightspeed_get(f"inventory/product/{product_id}")
-            return Response(data, status=status.HTTP_200_OK)
+
+            # Persist the detailed product (idempotent by primary key)
+            defaults = _map_product_to_model_fields(data if isinstance(data, dict) else {"id": product_id})
+            product_obj, _ = LightspeedProduct.objects.update_or_create(
+                id=data.get("id", product_id),
+                defaults=defaults,
+            )
+            serializer = LightspeedProductSerializer(product_obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as exc:
             logger.exception("Error fetching product by id: %s", product_id)
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
