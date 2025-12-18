@@ -6,6 +6,7 @@ from .models import LightspeedOrder, LightspeedProduct
 class LightspeedOrderAdmin(admin.ModelAdmin):
     list_display = (
         'id',
+        'location',
         'status',
         'type',
         'creation_date',
@@ -16,6 +17,7 @@ class LightspeedOrderAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'status',
+        'location',
         'type',
         'creation_date',
     )

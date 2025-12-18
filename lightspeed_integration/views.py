@@ -16,6 +16,30 @@ import time
 logger = logging.getLogger(__name__)
 
 
+def _map_location_to_value(location):
+    """
+    Map location parameter to actual location value.
+    
+    Mapping:
+    - Frietbooster -> Berlare
+    - Frietchalet -> Dendermonde
+    - Tipzakske -> Aalst
+    - Default -> Dendermonde
+    
+    Args:
+        location: Location string from request
+        
+    Returns:
+        str: Mapped location value
+    """
+    location_mapping = {
+        "Frietbooster": "Berlare",
+        "Frietchalet": "Dendermonde",
+        "Tipzakske": "Aalst",
+    }
+    return location_mapping.get(location, "Dendermonde")
+
+
 def _build_url_with_params(base: str, params: Optional[Dict[str, Optional[str]]] = None) -> str:
     """Build a URL with query parameters from a mapping, ignoring None/empty values."""
     if not params:
@@ -70,6 +94,7 @@ class OrdersView(APIView):
 
     def get(self, request, *_, **__):
         start = time.time()
+        location = request.query_params.get("location") or "Frietchalet"
         try:
             all_orders = []
             limit = 100   # Lightspeed default page size
@@ -79,7 +104,7 @@ class OrdersView(APIView):
             while True:
                 time.sleep(0.4)
                 endpoint = f"onlineordering/order?offset={offset}&amount={limit}"
-                chunk = lightspeed_get(endpoint)
+                chunk = lightspeed_get(endpoint, location=location)
 
                 # Handle different response formats
                 if isinstance(chunk, dict):
@@ -126,14 +151,14 @@ class OrdersView(APIView):
                     try:
                         print(f"Fetching data for ID : {order_id}")
                         time.sleep(0.4)
-                        detail_payload = lightspeed_get(f"onlineordering/order/{order_id}")
+                        detail_payload = lightspeed_get(f"onlineordering/order/{order_id}", location=location)
                         if isinstance(detail_payload, dict):
                             order_data = detail_payload
                     except Exception as detail_exc:
                         detail_failures += 1
                         logger.warning("Detail fetch failed for order %s: %s", order_id, detail_exc)
                     # Map API data to model fields
-                    defaults = _map_order_to_model_fields(order_data)
+                    defaults = _map_order_to_model_fields(order_data, location)
                     
                     # Use update_or_create to prevent duplicates (id is primary key)
                     order_obj, created = LightspeedOrder.objects.update_or_create(
@@ -156,6 +181,7 @@ class OrdersView(APIView):
                 "total_saved": len(saved_orders),
                 "skipped": skipped_count,
                 "detail_failures": detail_failures,
+                "location": location,
                 "orders": serializer.data,
                 "all_orders":all_orders
             }, status=status.HTTP_200_OK)
@@ -168,10 +194,14 @@ class OrdersView(APIView):
             )
 
 
-def _map_order_to_model_fields(order_data: Dict[str, Any]) -> Dict[str, Any]:
+def _map_order_to_model_fields(order_data: Dict[str, Any], location: str = "Frietchalet") -> Dict[str, Any]:
     """
     Map Lightspeed API order data to LightspeedOrder model fields.
     Handles missing/null values gracefully.
+    
+    Args:
+        order_data: Order data from Lightspeed API
+        location: Location parameter to map to location value
     """
     def parse_datetime_safe(value):
         """Safely parse datetime string, return None if invalid."""
@@ -199,6 +229,7 @@ def _map_order_to_model_fields(order_data: Dict[str, Any]) -> Dict[str, Any]:
         "external_reference": order_data.get("externalReference"),
         "customer_id": order_data.get("customerId"),
         "raw_data": order_data,
+        "location": _map_location_to_value(location),
     }
 
 
@@ -251,10 +282,14 @@ class OrderDetailView(APIView):
 
     def get(self, request, order_id: str, *_, **__):
         try:
-            data = lightspeed_get(f"onlineordering/order/{order_id}")
+            location = request.query_params.get("location") or "Frietchalet"
+            data = lightspeed_get(f"onlineordering/order/{order_id}", location=location)
 
             # Persist the detailed order (idempotent by primary key)
-            defaults = _map_order_to_model_fields(data if isinstance(data, dict) else {"id": order_id})
+            defaults = _map_order_to_model_fields(
+                data if isinstance(data, dict) else {"id": order_id},
+                location
+            )
             order_obj, _ = LightspeedOrder.objects.update_or_create(
                 id=data.get("id", order_id),
                 defaults=defaults,

@@ -61,6 +61,9 @@ class ShopifyOrder(models.Model):
     customer_first_name = models.CharField(max_length=255, null=True, blank=True, help_text="Customer first name")
     customer_last_name = models.CharField(max_length=255, null=True, blank=True, help_text="Customer last name")
     
+    # Location field with default value
+    location = models.CharField(max_length=100, default="Dendermonde", help_text="Order location")
+    
     # Complex nested data stored as JSON
     billing_address = models.JSONField(default=dict, null=True, blank=True, help_text="Billing address")
     customer_data = models.JSONField(default=dict, blank=True, help_text="Full customer data")
@@ -91,6 +94,7 @@ class ShopifyOrder(models.Model):
             models.Index(fields=['email']),
             models.Index(fields=['order_number']),
             models.Index(fields=['name']),
+            models.Index(fields=['location']),
         ]
     
     def __str__(self):

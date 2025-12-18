@@ -6,6 +6,7 @@ from .models import ShopifyOrder
 class ShopifyOrderAdmin(admin.ModelAdmin):
     list_display = (
         'id',
+        'location',
         'name',
         'order_number',
         'email',
@@ -18,6 +19,7 @@ class ShopifyOrderAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'financial_status',
+        'location',
         'fulfillment_status',
         'currency',
         'confirmed',
@@ -42,7 +44,7 @@ class ShopifyOrderAdmin(admin.ModelAdmin):
         ('Order Information', {
             'fields': (
                 'id', 'name', 'order_number', 'number', 'confirmation_number',
-                'confirmed', 'financial_status', 'fulfillment_status'
+                'confirmed', 'financial_status', 'fulfillment_status','location'
             )
         }),
         ('Customer Information', {

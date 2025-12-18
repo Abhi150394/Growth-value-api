@@ -35,6 +35,9 @@ class LightspeedOrder(models.Model):
     note = models.TextField(null=True, blank=True, help_text="Order notes")
     number_of_customers = models.IntegerField(default=0, help_text="Number of customers")
     
+    # Location field with default value
+    location = models.CharField(max_length=100, default="Dendermonde", help_text="Order location")
+    
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True, help_text="When this record was created in our DB")
     updated_at = models.DateTimeField(auto_now=True, help_text="When this record was last updated in our DB")
@@ -47,6 +50,7 @@ class LightspeedOrder(models.Model):
             models.Index(fields=['customer_id']),
             models.Index(fields=['creation_date']),
             models.Index(fields=['type']),
+            models.Index(fields=['location']),
         ]
     
     def __str__(self):

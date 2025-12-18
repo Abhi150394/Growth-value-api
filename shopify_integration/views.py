@@ -9,16 +9,43 @@ from .serializers import ShopifyOrderSerializer
 
 logger = logging.getLogger(__name__)
 
+def _map_location_to_value(location):
+    """
+    Map location parameter to actual location value.
+    
+    Mapping:
+    - Frietbooster -> Berlare
+    - Frietchalet -> Dendermonde
+    - Tipzakske -> Aalst
+    - Default -> Dendermonde
+    
+    Args:
+        location: Location string from request
+        
+    Returns:
+        str: Mapped location value
+    """
+    location_mapping = {
+        "Frietbooster": "Berlare",
+        "Frietchalet": "Dendermonde",
+        "Tipzakske": "Aalst",
+    }
+    return location_mapping.get(location, "Dendermonde")
+
 def products_view(request):
     """Get products from Shopify. Supports location query parameter."""
     location = request.GET.get("location") or "Frietchalet"
     data = get_products(location)
     return JsonResponse(data)
 
-def _map_shopify_order_to_model_fields(order_data: Dict[str, Any]) -> Dict[str, Any]:
+def _map_shopify_order_to_model_fields(order_data: Dict[str, Any], location: str = "Frietchalet") -> Dict[str, Any]:
     """
     Map Shopify API order data to ShopifyOrder model fields.
     Handles missing/null values gracefully.
+    
+    Args:
+        order_data: Order data from Shopify API
+        location: Location parameter to map to location value
     """
     def parse_datetime_safe(value):
         """Safely parse datetime string, return None if invalid."""
@@ -100,6 +127,7 @@ def _map_shopify_order_to_model_fields(order_data: Dict[str, Any]) -> Dict[str, 
         "created_at": parse_datetime_safe(order_data.get("created_at")),
         "updated_at": parse_datetime_safe(order_data.get("updated_at")),
         "raw_data": order_data,
+        "location": _map_location_to_value(location),
     }
 
 
@@ -109,7 +137,7 @@ def orders_view(request):
     Supports location query parameter.
     """
     location = request.GET.get("location") or "Frietchalet"
-    url = f"{_get_base_url(location)}/orders.json?limit=100"
+    url = f"{_get_base_url(location)}/orders.json?limit=250"
     try:
         all_orders = []
         next_url = None
@@ -137,8 +165,8 @@ def orders_view(request):
                 all_orders.extend(orders_list)
 
                 # Update next link for next iteration
-                # next_url = links.get("next",{}).get("url","")
-                next_url = False
+                next_url = links.get("next",{}).get("url","")
+                # next_url = False
                 print(f"next_url,{next_url}")
 
             except Exception as e:
@@ -161,7 +189,7 @@ def orders_view(request):
                 continue
 
             try:
-                defaults = _map_shopify_order_to_model_fields(order_data)
+                defaults = _map_shopify_order_to_model_fields(order_data, location)
 
                 order_obj, created = ShopifyOrder.objects.update_or_create(
                     id=order_id,
@@ -182,7 +210,7 @@ def orders_view(request):
             "total_saved": len(saved_orders),
             "skipped": skipped_count,
             "location": location,
-            "orders": serializer.data,
+            # "orders": serializer.data,
         }, safe=False)
 
     except Exception as exc:
