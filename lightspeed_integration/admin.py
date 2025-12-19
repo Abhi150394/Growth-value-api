@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LightspeedOrder, LightspeedProduct
+from .models import LightspeedOrder, LightspeedProduct, LightspeedProductGroup
 
 
 @admin.register(LightspeedOrder)
@@ -99,6 +99,44 @@ class LightspeedProductAdmin(admin.ModelAdmin):
         }),
         ('Product Content', {
             'fields': ('group_ids', 'additions', 'info')
+        }),
+        ('Metadata', {
+            'fields': ('raw_data', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(LightspeedProductGroup)
+class LightspeedProductGroupAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'name',
+        'location',
+        'category_id',
+        'visible',
+        'sequence',
+        'created_at',
+    )
+    list_filter = (
+        'visible',
+        'location',
+        # 'category_id',
+        'created_at',
+    )
+    search_fields = (
+        'id',
+        'name',
+    )
+    readonly_fields = ('id', 'created_at', 'updated_at', 'raw_data')
+    date_hierarchy = 'created_at'
+
+    fieldsets = (
+        ('Group Information', {
+            'fields': ('id', 'name', 'sequence', 'visible', 'category_id', 'shortcut_category')
+        }),
+        ('Products', {
+            'fields': ('products',)
         }),
         ('Metadata', {
             'fields': ('raw_data', 'created_at', 'updated_at'),

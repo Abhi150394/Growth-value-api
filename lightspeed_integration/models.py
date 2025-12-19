@@ -119,3 +119,32 @@ class LightspeedProduct(models.Model):
     
     def __str__(self):
         return f"Lightspeed Product #{self.id} - {self.name or 'Unnamed'}"
+
+
+class LightspeedProductGroup(models.Model):
+    """
+    Store Lightspeed product groups in the local database.
+    """
+    id = models.BigIntegerField(primary_key=True, help_text="Lightspeed product group ID")
+    name = models.CharField(max_length=255, null=True, blank=True, help_text="Product group name")
+    sequence = models.IntegerField(default=0, help_text="Display sequence")
+    visible = models.BooleanField(default=True, help_text="Whether the group is visible")
+    category_id = models.BigIntegerField(null=True, blank=True, help_text="Category ID")
+    shortcut_category = models.BooleanField(default=False, help_text="Whether group is a shortcut category")
+    products = models.JSONField(default=list, blank=True, help_text="Products under this group")
+    raw_data = models.JSONField(default=dict, blank=True, help_text="Full raw product group payload from Lightspeed")
+    location = models.CharField(max_length=100, default="Dendermonde", help_text="Order location")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="When this record was created in our DB")
+    updated_at = models.DateTimeField(auto_now=True, help_text="When this record was last updated in our DB")
+
+    class Meta:
+        db_table = 'lightspeed_product_groups'
+        ordering = ['sequence', 'id']
+        indexes = [
+            models.Index(fields=['visible']),
+            models.Index(fields=['category_id']),
+            models.Index(fields=['sequence']),
+        ]
+
+    def __str__(self):
+        return f"Lightspeed Product Group #{self.id} - {self.name or 'Unnamed'}"

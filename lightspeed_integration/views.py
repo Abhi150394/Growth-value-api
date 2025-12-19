@@ -10,8 +10,8 @@ from django.utils.dateparse import parse_datetime
 
 from lightspeed_integration.oauth import LightspeedAuth
 from .services import lightspeed_get, summarize_orders_by_date
-from .models import LightspeedOrder, LightspeedProduct
-from .serializers import LightspeedOrderSerializer, LightspeedProductSerializer
+from .models import LightspeedOrder, LightspeedProduct, LightspeedProductGroup
+from .serializers import LightspeedOrderSerializer, LightspeedProductSerializer, LightspeedProductGroupSerializer
 import time
 logger = logging.getLogger(__name__)
 
@@ -95,13 +95,14 @@ class OrdersView(APIView):
     def get(self, request, *_, **__):
         start = time.time()
         location = request.query_params.get("location") or "Frietchalet"
+        existing_count = LightspeedOrder.objects.filter(location= _map_location_to_value(location)).count()
         try:
             all_orders = []
             limit = 100   # Lightspeed default page size
             offset = 0
 
             # Fetch all orders from Lightspeed API
-            while True:
+            while len(all_orders)<3000:
                 time.sleep(0.4)
                 endpoint = f"onlineordering/order?offset={offset}&amount={limit}"
                 chunk = lightspeed_get(endpoint, location=location)
@@ -274,6 +275,21 @@ def _map_product_to_model_fields(product_data: Dict[str, Any]) -> Dict[str, Any]
         "raw_data": product_data,
     }
 
+
+def _map_product_group_to_model_fields(group_data: Dict[str, Any],location: str = "Frietchalet") -> Dict[str, Any]:
+    """
+    Map Lightspeed API product group data to LightspeedProductGroup model fields.
+    """
+    return {
+        "name": group_data.get("name"),
+        "sequence": group_data.get("sequence", 0) or 0,
+        "visible": bool(group_data.get("visible", True)),
+        "category_id": group_data.get("categoryId"),
+        "shortcut_category": bool(group_data.get("shortcutCategory", False)),
+        "products": group_data.get("products", []),
+        "raw_data": group_data,
+        "location": _map_location_to_value(location),
+    }
 
 
 class OrderDetailView(APIView):
@@ -675,13 +691,64 @@ class InventoryProductView(APIView):
 
 
 class InventoryProductGroupView(APIView):
-    """Fetch inventory productgroup details."""
+    """Fetch ALL product groups, save them locally, and return saved groups."""
     permission_classes = (AllowAny,)
 
     def get(self, request, *_, **__):
         try:
-            data = lightspeed_get("inventory/productgroup")
-            return Response(data, status=status.HTTP_200_OK)
+            location = request.query_params.get("location") or "Frietchalet"
+            limit = 100
+            offset = 0
+            all_groups = []
+
+            while True:
+                time.sleep(0.4)
+                params = {"offset": offset, "amount": limit}
+                chunk = lightspeed_get("inventory/productgroup", params=params, location=location)
+
+                if isinstance(chunk, dict):
+                    results = chunk.get("results", [])
+                elif isinstance(chunk, list):
+                    results = chunk
+                else:
+                    break
+
+                if not results:
+                    break
+
+                all_groups.extend(results)
+                offset += limit
+
+            saved_groups = []
+            skipped = 0
+            for group_data in all_groups:
+                if not isinstance(group_data, dict):
+                    skipped += 1
+                    continue
+
+                group_id = group_data.get("id")
+                if group_id is None:
+                    skipped += 1
+                    continue
+
+                defaults = _map_product_group_to_model_fields(group_data,location=location)
+                obj, _ = LightspeedProductGroup.objects.update_or_create(
+                    id=group_id,
+                    defaults=defaults,
+                )
+                saved_groups.append(obj)
+
+            serializer = LightspeedProductGroupSerializer(saved_groups, many=True)
+            return Response(
+                {
+                    "total_fetched": len(all_groups),
+                    "total_saved": len(saved_groups),
+                    "skipped": skipped,
+                    "location": location,
+                    "groups": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as exc:
             logger.exception("Error fetching inventory productgroup details")
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
