@@ -3,7 +3,10 @@ from datetime import datetime
 import requests
 from time import sleep
 from rest_framework import viewsets
+from django.db import connection
 
+from backend.services.monthly_stats_builder import build_monthly_stats_response
+from backend.services.monthly_stats_sql import fetch_monthly_stats_raw
 from .serializers import (
     UserSerializer, UserListSerializer, SearchSerializer, OrderSerializer, WishlistSerializer,
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
@@ -942,3 +945,64 @@ class XMLUploadView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+        
+        
+# ========================================Reports=====================================================================
+
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_sales_area(request):
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    if not start_date or not end_date:
+        return Response({"error": "start_date and end_date are required"}, status=400)
+
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+    # 🔹 1. Fetch raw flat data (UNCHANGED SQL)
+    raw_data = fetch_monthly_stats_raw(
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+
+    # 🔹 2. Build frontend response shape
+    response = build_monthly_stats_response(
+        raw_data=raw_data,
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+
+    return Response(response)
+
+# ======================Sales Location =========================
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_sales_location(request):
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    if not start_date or not end_date:
+        return Response({"error": "start_date and end_date are required"}, status=400)
+
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+    # 🔹 1. Fetch raw flat data (UNCHANGED SQL)
+    raw_data = fetch_monthly_stats_raw(
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+
+    # 🔹 2. Build frontend response shape
+    response = build_monthly_stats_response(
+        raw_data=raw_data,
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+
+    return Response(response)
+
+# ======================Sales Product =========================
+#

@@ -99,6 +99,8 @@ class LightspeedProduct(models.Model):
     group_ids = models.JSONField(default=list, blank=True, help_text="Product group IDs array")
     additions = models.JSONField(default=list, blank=True, help_text="Product additions array")
     raw_data = models.JSONField(default=dict, blank=True, help_text="Full raw product payload from Lightspeed")
+    location = models.CharField(max_length=100, default="Dendermonde", help_text="Product location")
+    
     
     # Additional fields
     info = models.TextField(null=True, blank=True, help_text="Product information/description")
@@ -133,7 +135,7 @@ class LightspeedProductGroup(models.Model):
     shortcut_category = models.BooleanField(default=False, help_text="Whether group is a shortcut category")
     products = models.JSONField(default=list, blank=True, help_text="Products under this group")
     raw_data = models.JSONField(default=dict, blank=True, help_text="Full raw product group payload from Lightspeed")
-    location = models.CharField(max_length=100, default="Dendermonde", help_text="Order location")
+    location = models.CharField(max_length=100, default="Dendermonde", help_text="Product location")
     created_at = models.DateTimeField(auto_now_add=True, help_text="When this record was created in our DB")
     updated_at = models.DateTimeField(auto_now=True, help_text="When this record was last updated in our DB")
 

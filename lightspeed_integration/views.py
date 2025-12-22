@@ -234,7 +234,7 @@ def _map_order_to_model_fields(order_data: Dict[str, Any], location: str = "Frie
     }
 
 
-def _map_product_to_model_fields(product_data: Dict[str, Any]) -> Dict[str, Any]:
+def _map_product_to_model_fields(product_data: Dict[str, Any],location: str = "Frietchalet") -> Dict[str, Any]:
     """
     Map Lightspeed API product data to LightspeedProduct model fields.
     Handles missing/null values gracefully.
@@ -273,6 +273,8 @@ def _map_product_to_model_fields(product_data: Dict[str, Any]) -> Dict[str, Any]
         "additions": product_data.get("additions", []),
         "info": product_data.get("info"),
         "raw_data": product_data,
+        "location": _map_location_to_value(location),
+        
     }
 
 
@@ -324,6 +326,8 @@ class ProductsView(APIView):
 
     def get(self, request, *_, **__):
         start = time.time()
+        location = request.query_params.get("location") or "Frietchalet"
+        
         try:
             all_products = []
             limit = 100   # Lightspeed default page size
@@ -332,7 +336,7 @@ class ProductsView(APIView):
             # Fetch all products from Lightspeed API
             while True:
                 endpoint = f"inventory/product?offset={offset}&amount={limit}"
-                chunk = lightspeed_get(endpoint)
+                chunk = lightspeed_get(endpoint,location=location)
 
                 # Handle different response formats
                 if isinstance(chunk, dict):
@@ -370,7 +374,7 @@ class ProductsView(APIView):
                 
                 try:
                     # Map API data to model fields
-                    defaults = _map_product_to_model_fields(product_data)
+                    defaults = _map_product_to_model_fields(product_data,location=location)
                     
                     # Use update_or_create to prevent duplicates (id is primary key)
                     product_obj, created = LightspeedProduct.objects.update_or_create(
@@ -682,8 +686,9 @@ class InventoryProductView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, *_, **__):
+        location = request.query_params.get("location") or "Frietchalet"
         try:
-            data = lightspeed_get("inventory/product")
+            data = lightspeed_get("inventory/product",location=location)
             return Response(data, status=status.HTTP_200_OK)
         except Exception as exc:
             logger.exception("Error fetching inventory product details")

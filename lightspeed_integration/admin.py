@@ -55,6 +55,7 @@ class LightspeedProductAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'name',
+        'location',
         'sku',
         'visible',
         'price',
@@ -64,6 +65,7 @@ class LightspeedProductAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'visible',
+        'location',
         'stock_management_enabled',
         'product_type',
         'created_at',
