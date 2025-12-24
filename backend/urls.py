@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from . import views
-from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location
+from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location,lightspeed_sales_productItem,lightspeed_product_Items
 from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterEmployeeShiftsView
 
 router = routers.DefaultRouter()
@@ -52,4 +52,6 @@ urlpatterns = [
     path('upload-xml/', XMLUploadView.as_view(), name='upload-xml'),
     path("reports/lightspeed/sales-area/", lightspeed_sales_area),
     path("reports/lightspeed/sales-location/",lightspeed_sales_location),
+    path("reports/lightspeed/sales-productItem/",lightspeed_sales_productItem),
+    path("lightspeed/productItems/",lightspeed_product_Items)
 ]

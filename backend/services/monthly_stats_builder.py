@@ -92,6 +92,88 @@ def build_overall(detail):
     return output
 
 
+def normalize_product_item_row(row):
+    """Normalize row for product item stats - uses product_id as key instead of location"""
+    return {
+        "product_id": str(row.get("product_id", "unknown")),
+        "product_name": row.get("product_name", "Unknown Product"),
+        "location": row.get("location", "").lower() if row.get("location") else "",
+
+        "period": datetime.strptime(row["current_day"], "%d/%m/%Y").date().isoformat(),
+        "period_ly": datetime.strptime(row["previous_day"], "%d/%m/%Y").date().isoformat(),
+
+        "total": row["totalpayment_current"],
+        "total_ly": row["totalpayment_previous"],
+
+        "count": row["totalorder_current"],
+        "count_ly": row["totalorder_previous"],
+
+        "guest_count": row["totalcustomer_current"],
+        "guest_count_ly": row["totalcustomer_previous"],
+
+        "time_to_serve": row["avgdelivery_minutes_current"],
+        "time_to_serve_ly": row["avgdelivery_minutes_previous"],
+
+        "void_count": 0,
+        "void_count_ly": 0,
+        "void_total": 0,
+        "void_total_ly": 0,
+
+        "guest_total": row["totalpayment_current"],
+        "guest_total_ly": row["totalpayment_previous"],
+
+        "budget": 0,
+        "budget_ly": 0,
+    }
+
+
+def build_product_item_stats_response(raw_data, start_date, end_date):
+    """Build stats response for product items - similar to build_monthly_stats_response but grouped by product"""
+    detail = defaultdict(list)
+
+    for row in raw_data:
+        normalized = normalize_product_item_row(row)
+        # Use product_id as the key for grouping
+        detail[normalized["product_id"]].append(normalized)
+
+    overall = build_overall(detail)
+
+    # Build detail dictionary with product_id as keys
+    product_detail = {"all": overall}
+    # for product_id, rows in detail.items():
+    #     # Use product_name from first row (all rows for same product should have same name)
+    #     product_name = rows[0]["product_name"] if rows else "Unknown"
+    #     product_detail[product_id] = {
+    #         "product_id": product_id,
+    #         "product_name": product_name,
+    #         product_name: rows
+    #     }
+    for rows in detail.values():
+        if not rows:
+            continue
+
+        product_name = rows[0].get("product_name", "Unknown")
+
+        # If same product_name appears multiple times, merge rows
+        if product_name in product_detail:
+            product_detail[product_name].extend(rows)
+        else:
+            product_detail[product_name] = rows
+
+    return {
+        "overall": overall,
+        "detail": product_detail,
+        "compare_period": {
+            "from": start_date.replace(year=start_date.year - 1).isoformat(),
+            "to": end_date.replace(year=end_date.year - 1).isoformat(),
+        },
+        "this_period": {
+            "from": start_date.isoformat(),
+            "to": end_date.isoformat(),
+        },
+    }
+
+
 def build_monthly_stats_response(raw_data, start_date, end_date):
     detail = defaultdict(list)
 

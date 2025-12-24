@@ -5,8 +5,8 @@ from time import sleep
 from rest_framework import viewsets
 from django.db import connection
 
-from backend.services.monthly_stats_builder import build_monthly_stats_response
-from backend.services.monthly_stats_sql import fetch_monthly_stats_raw
+from backend.services.monthly_stats_builder import build_monthly_stats_response, build_product_item_stats_response
+from backend.services.monthly_stats_sql import fetch_monthly_stats_raw, fetch_sales_productItem_raw
 from .serializers import (
     UserSerializer, UserListSerializer, SearchSerializer, OrderSerializer, WishlistSerializer,
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
@@ -15,6 +15,8 @@ from .models import (
     UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
     UserDataResetPassword
     )
+from lightspeed_integration.models import LightspeedProduct
+from django.db.models.functions import Trim
 from backend.models import XMLFile
 from rest_framework.response import Response
 from rest_framework import status
@@ -1004,5 +1006,66 @@ def lightspeed_sales_location(request):
 
     return Response(response)
 
-# ======================Sales Product =========================
-#
+# ======================Sales Product Items =========================
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_sales_productItem(request):
+    start_date=request.GET.get("start_date")
+    end_date=request.GET.get("end_date")
+    
+    if not start_date or not end_date:
+        return Response({"error":"start date and end date are required"},status=400)
+    
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
+    # 🔹 1. Fetch raw flat data (UNCHANGED SQL)
+    raw_data = fetch_sales_productItem_raw(
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+
+    # 🔹 2. Build frontend response shape
+    response = build_product_item_stats_response(
+        raw_data=raw_data,
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+
+    return Response(response)
+
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_product_Items(request):
+    """
+    Returns all distinct product names from lightspeed_products table.
+    Equivalent SQL:
+    SELECT DISTINCT TRIM(name) FROM lightspeed_products WHERE name IS NOT NULL;
+    """
+
+    try:
+        product_names = (
+            LightspeedProduct.objects
+            .exclude(Q(name__isnull=True) | Q(name=""))
+            .annotate(name_clean=Trim("name"))
+            .values_list("name_clean", flat=True)
+            .distinct()
+            .order_by("name_clean")
+        )
+
+        return Response(
+            {
+                "count": len(product_names),
+                "results": list(product_names)
+            },
+            status=status.HTTP_200_OK
+        )
+
+    except Exception as e:
+        return Response(
+            {
+                "error": "Failed to fetch product names",
+                "details": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
