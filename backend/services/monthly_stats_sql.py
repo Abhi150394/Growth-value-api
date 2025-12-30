@@ -257,7 +257,7 @@ SELECT
     sum(totalorder_previous) as totalorder_previous,
     sum(totalcustomer_current) as totalcustomer_current,
     sum(totalcustomer_previous) as totalcustomer_previous,
-    sum(quantity_current) as quantity_previous,
+    sum(quantity_current) as quantity_current,
     sum(quantity_previous) as quantiy_previous,
     sum(totalpayment_current) as totalpayment_current,
     sum(totalpayment_previous) as totalpayment_previous,
@@ -282,3 +282,163 @@ SELECT
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+def fetch_sales_productCategory_raw(start_date,end_date):
+    prev_start=start_date.replace(year=start_date.year-1)
+    prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql = """
+    WITH current_dates AS (
+    SELECT generate_series(
+        %s::date,
+        %s::date,
+        INTERVAL '1 day'
+    )::date AS curr_date
+    ),
+    previous_dates AS (
+        SELECT
+            curr_date,
+            (curr_date - INTERVAL '1 year')::date AS prev_date
+        FROM current_dates
+    ),
+    cte_current_raw AS (
+        SELECT
+            o.id AS order_id,
+            oi.elem->>'productId' AS product_id,
+            p.name AS product_name,
+            p.group_ids,
+            o.creation_date::date AS day_date,
+            (oi.elem->>'amount')::numeric AS quantity,
+            (oi.elem->>'unitPrice')::numeric AS unit_price,
+            o.customer_id,
+            CASE
+                WHEN o.delivery_date IS NOT NULL
+                THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
+            END AS delivery_minutes
+        FROM lightspeed_orders o
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_items) oi(elem) ON TRUE
+        LEFT JOIN lightspeed_products p
+            ON p.id::text = oi.elem->>'productId'
+        WHERE o.creation_date >= %s
+        AND o.creation_date <  %s
+    ),
+    cte_current AS (
+        SELECT
+            product_id,
+            product_name,
+            day_date,
+            group_ids,
+            COUNT(DISTINCT order_id) AS total_orders_current,
+            COUNT(DISTINCT customer_id) AS total_customers_current,
+            SUM(quantity) AS total_quantity_current,
+            ROUND(SUM(quantity * unit_price), 2) AS total_revenue_current,
+            ROUND(AVG(delivery_minutes), 2) AS avg_delivery_minutes_current
+        FROM cte_current_raw
+        GROUP BY product_id, product_name, day_date,group_ids
+    ),
+    cte_previous_raw AS (
+        SELECT
+            o.id AS order_id,
+            oi.elem->>'productId' AS product_id,
+            p.name AS product_name,
+            p.group_ids,
+            o.creation_date::date AS day_date,
+            (oi.elem->>'amount')::numeric AS quantity,
+            (oi.elem->>'unitPrice')::numeric AS unit_price,
+            o.customer_id,
+            CASE
+                WHEN o.delivery_date IS NOT NULL
+                THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
+            END AS delivery_minutes
+        FROM lightspeed_orders o
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_items) oi(elem) ON TRUE
+        LEFT JOIN lightspeed_products p
+            ON p.id::text = oi.elem->>'productId'
+        WHERE o.creation_date >= %s
+        AND o.creation_date <  %s
+    ),
+    cte_previous AS (
+        SELECT
+            product_id,
+            product_name,
+            day_date,
+            group_ids,
+            COUNT(DISTINCT order_id) AS total_orders_previous,
+            COUNT(DISTINCT customer_id) AS total_customers_previous,
+            SUM(quantity) AS total_quantity_previous,
+            ROUND(SUM(quantity * unit_price), 2) AS total_revenue_previous,
+            ROUND(AVG(delivery_minutes), 2) AS avg_delivery_minutes_previous
+        FROM cte_previous_raw
+        GROUP BY product_id, product_name, day_date,group_ids
+    ),
+    cte1 as(
+    SELECT
+        TO_CHAR(pd.curr_date, 'DD/MM/YYYY') AS curr_date,
+        TO_CHAR(pd.prev_date, 'DD/MM/YYYY') AS prev_date,
+        --cast(replace(replace(COALESCE(c.group_ids, p.group_ids, '0'),'[',''),']','') as bigint) AS group_ids,
+        CAST(
+    COALESCE(
+        (c.group_ids ->> 0),
+        (p.group_ids ->> 0),
+        '0'
+    ) AS BIGINT
+    ) AS group_ids,
+        cast(COALESCE(c.product_id, p.product_id, '0') as bigint) AS product_id,
+        COALESCE(c.product_name, p.product_name, 'Not Available') AS product_name,
+        COALESCE(c.total_orders_current, 0)   AS orders_current,
+        COALESCE(p.total_orders_previous, 0)  AS orders_previous,
+        COALESCE(c.total_customers_current, 0)  AS customers_current,
+        COALESCE(p.total_customers_previous, 0) AS customers_previous,
+        COALESCE(c.total_quantity_current, 0)  AS quantity_current,
+        COALESCE(p.total_quantity_previous, 0) AS quantity_previous,
+        COALESCE(c.total_revenue_current, 0)  AS revenue_current,
+        COALESCE(p.total_revenue_previous, 0) AS revenue_previous,
+        COALESCE(c.avg_delivery_minutes_current, 0)  AS avg_delivery_minutes_current,
+        COALESCE(p.avg_delivery_minutes_previous, 0) AS avg_delivery_minutes_previous
+    FROM previous_dates pd
+    LEFT JOIN cte_current c
+        ON c.day_date = pd.curr_date 
+    left JOIN cte_previous p
+        ON p.product_id = c.product_id
+        AND p.day_date = pd.prev_date
+    ORDER BY c.product_name, pd.curr_date
+    ),
+    cte2 as (
+    --select * from cte1 join lightspeed_product_groups as pg on pg.id=replace(replace(cte1.group_ids,'[',''),']','')
+    SELECT *
+    FROM cte1
+    JOIN lightspeed_product_groups pg
+    ON pg.id = cte1.group_ids
+    )
+    select 
+    group_ids as product_category_id,
+    name as product_category_name,
+    curr_date as current_day,prev_date as previous_day,
+    sum(orders_current) as totalorder_current,
+    sum(orders_previous) as totalorder_previous,
+    sum(customers_current) as totalcustomer_current,
+    sum(customers_previous) as totalcustomer_previous,
+    sum(quantity_current) as quantity_current,
+    sum(quantity_previous) as quantiy_previous,
+    sum(revenue_current) as totalpayment_current,
+    sum(revenue_previous) as totalpayment_previous,
+    sum(avg_delivery_minutes_current) as avgdelivery_minutes_current,
+    sum(avg_delivery_minutes_previous) as avgdelivery_minutes_previous
+    from cte2 
+    group by group_ids,curr_date,prev_date,name
+    order by curr_date    
+    """
+    
+    params = [
+        start_date,
+        end_date,
+        start_date,
+        end_date+timedelta(days=1),
+        prev_start,
+        prev_end+timedelta(days=1),
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql,params)
+        columns = [col[0] for col in cursor.description]
+        return [dict(zip(columns,row)) for row in cursor.fetchall()]

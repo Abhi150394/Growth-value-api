@@ -200,3 +200,74 @@ def build_monthly_stats_response(raw_data, start_date, end_date):
             "to": end_date.isoformat(),
         },
     }
+
+def normalized_product_category_row(row):
+    """Normalize row for product category stats - uses product_category_id as key instead of product_id"""
+    return {
+        "product_category_id": str(row.get("product_category_id", "unknown")),
+        "product_category_name": row.get("product_category_name", "Unknown Product"),
+        "location": row.get("location", "").lower() if row.get("location") else "",
+
+        "period": datetime.strptime(row["current_day"], "%d/%m/%Y").date().isoformat(),
+        "period_ly": datetime.strptime(row["previous_day"], "%d/%m/%Y").date().isoformat(),
+
+        "total": row["totalpayment_current"],
+        "total_ly": row["totalpayment_previous"],
+
+        "count": row["totalorder_current"],
+        "count_ly": row["totalorder_previous"],
+
+        "guest_count": row["totalcustomer_current"],
+        "guest_count_ly": row["totalcustomer_previous"],
+
+        "time_to_serve": row["avgdelivery_minutes_current"],
+        "time_to_serve_ly": row["avgdelivery_minutes_previous"],
+
+        "void_count": 0,
+        "void_count_ly": 0,
+        "void_total": 0,
+        "void_total_ly": 0,
+
+        "guest_total": row["totalpayment_current"],
+        "guest_total_ly": row["totalpayment_previous"],
+
+        "budget": 0,
+        "budget_ly": 0,
+    }
+
+def build_product_category_stats_reponse(raw_data,start_date,end_date):
+    """Build stats response for product category """
+    
+    details=defaultdict(list)
+    
+    for row in raw_data:
+        normalized = normalized_product_category_row(row)
+        details[normalized["product_category_id"]].append(normalized)
+        
+    overall=build_overall(details)
+    # build details dictionary with product_category as key
+    product_details = {"all":overall}
+    
+    for rows in details.values():
+        if not rows:
+            continue
+        
+        product_category_name = rows[0].get("product_category_name","Unknown")
+        
+        if product_category_name in product_details:
+            product_details[product_category_name].extend(rows)
+        else:
+            product_details[product_category_name]=rows
+        
+    return {
+        "overall":overall,
+        "detail":product_details,
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }

@@ -5,8 +5,8 @@ from time import sleep
 from rest_framework import viewsets
 from django.db import connection
 
-from backend.services.monthly_stats_builder import build_monthly_stats_response, build_product_item_stats_response
-from backend.services.monthly_stats_sql import fetch_monthly_stats_raw, fetch_sales_productItem_raw
+from backend.services.monthly_stats_builder import build_monthly_stats_response, build_product_category_stats_reponse, build_product_item_stats_response
+from backend.services.monthly_stats_sql import fetch_monthly_stats_raw, fetch_sales_productCategory_raw, fetch_sales_productItem_raw
 from .serializers import (
     UserSerializer, UserListSerializer, SearchSerializer, OrderSerializer, WishlistSerializer,
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
@@ -15,7 +15,7 @@ from .models import (
     UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
     UserDataResetPassword
     )
-from lightspeed_integration.models import LightspeedProduct
+from lightspeed_integration.models import LightspeedProduct,LightspeedProductGroup
 from django.db.models.functions import Trim
 from backend.models import XMLFile
 from rest_framework.response import Response
@@ -1069,3 +1069,65 @@ def lightspeed_product_Items(request):
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+ 
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_product_Categories(request):
+    """
+    Returns all distinct product names from lightspeed_products table.
+    Equivalent SQL:
+    SELECT DISTINCT TRIM(name) FROM lightspeed_products WHERE name IS NOT NULL;
+    """
+
+    try:
+        product_categories = (
+            LightspeedProductGroup.objects
+            .exclude(Q(name__isnull=True) | Q(name=""))
+            .annotate(name_clean=Trim("name"))
+            .values_list("name_clean", flat=True)
+            .distinct()
+            .order_by("name_clean")
+        )
+
+        return Response(
+            {
+                "count": len(product_categories),
+                "results": list(product_categories)
+            },
+            status=status.HTTP_200_OK
+        )
+
+    except Exception as e:
+        return Response(
+            {
+                "error": "Failed to fetch product names",
+                "details": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+        
+        
+# ======================Sales Product Category =========================
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_sales_productCategory(request):
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    if not start_date or not end_date:
+        return Response({"error": "start_date and end_date are required"}, status=400)
+
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
+    # fetch raw data
+    raw_data=fetch_sales_productCategory_raw(start_date=start_date_obj, end_date=end_date_obj)
+    
+    # build frontend response shape
+    response= build_product_category_stats_reponse(
+        raw_data=raw_data,
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+    
+    return Response(response)

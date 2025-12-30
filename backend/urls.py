@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from . import views
-from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location,lightspeed_sales_productItem,lightspeed_product_Items
+from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location,lightspeed_sales_productItem,lightspeed_product_Items,lightspeed_product_Categories,lightspeed_sales_productCategory
 from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterEmployeeShiftsView
 
 router = routers.DefaultRouter()
@@ -53,5 +53,8 @@ urlpatterns = [
     path("reports/lightspeed/sales-area/", lightspeed_sales_area),
     path("reports/lightspeed/sales-location/",lightspeed_sales_location),
     path("reports/lightspeed/sales-productItem/",lightspeed_sales_productItem),
-    path("lightspeed/productItems/",lightspeed_product_Items)
+    path("reports/lightspeed/sales-productCategory/",lightspeed_sales_productCategory),
+    
+    path("lightspeed/productItems/",lightspeed_product_Items),
+    path("lightspeed/productCategories/",lightspeed_product_Categories)
 ]
