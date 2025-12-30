@@ -1,10 +1,8 @@
 from collections import defaultdict
 from datetime import datetime
 
-def normalize_row(row):
-    return {
-        "location": row["location"].lower(),
-
+def normalize_row(row, group_by="location"):
+    data = {
         "period": datetime.strptime(row["current_day"], "%d/%m/%Y").date().isoformat(),
         "period_ly": datetime.strptime(row["previous_day"], "%d/%m/%Y").date().isoformat(),
 
@@ -31,6 +29,17 @@ def normalize_row(row):
         "budget": 0,
         "budget_ly": 0,
     }
+
+    # 🔑 Dynamic grouping key
+    if group_by == "location":
+        data["location"] = row.get("location", "").lower()
+    elif group_by == "channel":
+        data["channel"] = row.get("channel", "").lower()
+    else:
+        # future-proof: allow any column name
+        data[group_by] = row.get(group_by, "").lower()
+
+    return data
 
 
 def build_overall(detail):
@@ -173,6 +182,32 @@ def build_product_item_stats_response(raw_data, start_date, end_date):
         },
     }
 
+def build_orderType_stats_response(raw_data,start_date,end_date):
+    detail= defaultdict(list)
+    for row in raw_data:
+        normalized=normalize_row(row,"channel")
+        detail[normalized["channel"]].append(normalized)
+        
+    overall=build_overall(detail)
+    
+    return {
+        "overall":overall,
+        "detail":{
+            "all":overall,
+            "takeaway":detail.get("takeaway",[]),
+            "shopify":detail.get("shopify",[]),
+            "deliverect":detail.get("deliverect",[]),
+            "takeaway.com":detail.get("takeaway.com",[])
+        },
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat()
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
 
 def build_monthly_stats_response(raw_data, start_date, end_date):
     detail = defaultdict(list)
@@ -242,7 +277,7 @@ def build_product_category_stats_reponse(raw_data,start_date,end_date):
     
     for row in raw_data:
         normalized = normalized_product_category_row(row)
-        details[normalized["product_category_id"]].append(normalized)
+        details[normalized["product_category_name"]].append(normalized)
         
     overall=build_overall(details)
     # build details dictionary with product_category as key
