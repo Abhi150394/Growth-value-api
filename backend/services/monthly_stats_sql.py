@@ -383,8 +383,7 @@ SELECT
 
     ORDER BY prod.product_name, pd.curr_date
     )
-    select 
-    product_id,
+    select
     product_name,
     current_day,previous_day,
     sum(totalorder_current) as totalorder_current,
@@ -398,7 +397,7 @@ SELECT
     sum(avgdelivery_minutes_current) as avgdelivery_minutes_current,
     sum(avgdelivery_minutes_previous) as avgdelivery_minutes_previous
     from cte1
-    group by product_name,product_id,current_day,previous_day
+    group by product_name,current_day,previous_day
     order by current_day
 
     """

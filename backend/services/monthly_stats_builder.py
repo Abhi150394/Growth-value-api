@@ -104,7 +104,7 @@ def build_overall(detail):
 def normalize_product_item_row(row):
     """Normalize row for product item stats - uses product_id as key instead of location"""
     return {
-        "product_id": str(row.get("product_id", "unknown")),
+        # "product_id": str(row.get("product_id", "unknown")),
         "product_name": row.get("product_name", "Unknown Product"),
         "location": row.get("location", "").lower() if row.get("location") else "",
 
@@ -143,7 +143,7 @@ def build_product_item_stats_response(raw_data, start_date, end_date):
     for row in raw_data:
         normalized = normalize_product_item_row(row)
         # Use product_id as the key for grouping
-        detail[normalized["product_id"]].append(normalized)
+        detail[normalized["product_name"]].append(normalized)
 
     overall = build_overall(detail)
 
