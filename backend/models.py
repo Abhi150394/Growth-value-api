@@ -213,6 +213,130 @@ class Products(models.Model):
         vlist = list(Vendor.objects.all().values_list('name', flat=True))
         return vlist
 
+class ShyfterEmployee(models.Model):
+    """
+    Store Shyfter employee/admin users in a single table.
+    """
+
+    # 🔑 Core identifiers
+    id = models.CharField(
+        max_length=255,
+        primary_key=True,
+        help_text="Shyfter employee ID"
+    )
+
+    type = models.CharField(
+        max_length=100,
+        help_text="User type (admin, employee, etc.)"
+    )
+
+    active = models.BooleanField(
+        default=True,
+        help_text="Whether the employee member is active"
+    )
+
+    # 👤 Personal info
+    first_name = models.CharField(max_length=100, null=True, blank=True)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
+    display_name = models.CharField(max_length=200, null=True, blank=True)
+
+    gender = models.CharField(max_length=20, null=True, blank=True)
+    civil_state = models.CharField(max_length=20, null=True, blank=True)
+
+    avatar = models.URLField(null=True, blank=True)
+
+    # 📞 Contact info
+    email = models.EmailField(null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+
+    national_number = models.CharField(max_length=100, null=True, blank=True)
+    iban = models.CharField(max_length=100, null=True, blank=True)
+
+    # 🌍 Locale / language
+    language = models.CharField(
+        max_length=10,
+        default="en",
+        help_text="User language"
+    )
+
+    # 🎂 Birth details
+    birth_date = models.DateField(null=True, blank=True)
+    birth_place = models.CharField(max_length=100, null=True, blank=True)
+    birth_country = models.CharField(max_length=100, null=True, blank=True)
+
+    # 💰 Work-related
+    hourly_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    category = models.CharField(max_length=150, null=True, blank=True)
+
+    # 📍 Location (same pattern as product group)
+    location = models.CharField(
+        max_length=100,
+        default="Dendermonde",
+        help_text="employee location"
+    )
+
+    # 🧩 Nested objects stored as JSON
+    address = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Address object"
+    )
+
+    settings = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Settings object"
+    )
+
+    defaults = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Defaults/worktime object"
+    )
+
+    custom_fields = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Custom fields array"
+    )
+
+    # 🧾 Full raw payload
+    raw_data = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Full raw employee payload from Shyfter"
+    )
+
+    # ⏱ Audit fields
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="When this record was created in our DB"
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        help_text="When this record was last updated in our DB"
+    )
+
+    class Meta:
+        db_table = "shyfter_employee"
+        ordering = ["display_name", "id"]
+        indexes = [
+            models.Index(fields=["active"]),
+            models.Index(fields=["type"]),
+            models.Index(fields=["email"]),
+            models.Index(fields=["location"]),
+        ]
+
+    def __str__(self):
+        return f"Shyfter employee #{self.id} - {self.display_name or 'Unnamed'}"
+
+
 class Wishlist(models.Model):
     user_id = models.ForeignKey(UserData, on_delete=models.PROTECT, related_name="wishlists", null=True)
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name="wishlists")

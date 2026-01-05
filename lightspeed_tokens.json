@@ -1,9 +1,9 @@
 {
   "Frietchalet": {
-    "refresh_token": "ec6fd9e065c7d17f0ed255f5beb447a2",
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ0OTgxLCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiNGFkYWUyODItM2VmOC00NzZjLWI1MjAtMWY5YmJiZjQ4NDM5Iiwic3ViIjoiMTYwNzE2Iiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3NjcwNzQ4ODgsImV4cCI6MTc2NzA3ODQ4OH0.FGpAlTeSV-2HJgfl5R8ZXci4wYjpsb_PmUlD48urN4Y",
+    "refresh_token": "09e4cde3f018d9099cadde94f174eafc",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ0OTgxLCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiNGFkYWUyODItM2VmOC00NzZjLWI1MjAtMWY5YmJiZjQ4NDM5Iiwic3ViIjoiMTYwNzE2Iiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3NjczNDU0OTAsImV4cCI6MTc2NzM0OTA5MH0.HlgQxefuka5k-sd46DHzxV0MbkA7PVXS4cm4wgmY0Kc",
     "expires_in": 3600,
-    "timestamp": 1767074889
+    "timestamp": 1767345490
   },
   "Frietbooster": {
     "refresh_token": "b47a28646a8a9b21a820a9d8dce1cf17",

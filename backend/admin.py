@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserData, Payment, Orders, Searches, Products, Wishlist, Scraper, Tag, Vendor
+from .models import UserData, Payment, Orders, Searches, Products, Wishlist, Scraper, Tag, Vendor,ShyfterEmployee
 
 # Register your models here.
 admin.site.register(UserData)
@@ -24,4 +24,16 @@ class AdminProducts(admin.ModelAdmin):
         "vendor",
     )
 
+class AdminShyfterEmployee(admin.ModelAdmin):
+    search_fields=("location","type")
+    list_display=(
+        "id",
+        "type",
+        "email",
+        "location",
+    )
+    list_filter=("location","type")
+    
+    
+admin.site.register(ShyfterEmployee,AdminShyfterEmployee)
 admin.site.register(Products, AdminProducts)

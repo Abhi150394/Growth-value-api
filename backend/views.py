@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+import time
 import requests
 from time import sleep
 from rest_framework import viewsets
@@ -8,11 +9,11 @@ from django.db import connection
 from backend.services.monthly_stats_builder import build_monthly_stats_response, build_orderType_stats_response, build_product_category_stats_reponse, build_product_item_stats_response
 from backend.services.monthly_stats_sql import fetch_monthly_stats_raw, fetch_sales_orderType_raw, fetch_sales_productCategory_raw, fetch_sales_productItem_raw
 from .serializers import (
-    UserSerializer, UserListSerializer, SearchSerializer, OrderSerializer, WishlistSerializer,
+    ShyfterEmployeeSeriallizer, UserSerializer, UserListSerializer, SearchSerializer, OrderSerializer, WishlistSerializer,
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
     )
 from .models import (
-    UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
+    ShyfterEmployee, UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
     UserDataResetPassword
     )
 from lightspeed_integration.models import LightspeedProduct,LightspeedProductGroup
@@ -22,7 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -854,30 +855,132 @@ def _get_shyfter_headers(location: str = "Frietchalet") -> dict:
     return headers
 
 
+def _map_shyfter_employee_to_model_fields(emp, location):
+    return {
+        # 🔑 Core
+        "type": emp.get("type"),
+        "active": emp.get("active", True),
+        "location": location,
+
+        # 👤 Personal
+        "first_name": emp.get("first_name"),
+        "last_name": emp.get("last_name"),
+        "display_name": emp.get("display_name"),
+
+        "gender": emp.get("gender"),
+        "civil_state": emp.get("civil_state"),
+        "avatar": emp.get("avatar"),
+
+        # 📞 Contact
+        "email": emp.get("email"),
+        "phone": emp.get("phone"),
+        "national_number": emp.get("national_number"),
+        "iban": emp.get("iban"),
+
+        # 🌍 Locale
+        "language": emp.get("language", "en"),
+
+        # 🎂 Birth
+        "birth_date": emp.get("birth_date") or None,
+        "birth_place": emp.get("birth_place"),
+        "birth_country": emp.get("birth_country"),
+
+        # 💰 Work
+        "hourly_cost": emp.get("hourly_cost") or 0,
+        "category": emp.get("category"),
+
+        # 🧩 JSON blobs (IMPORTANT)
+        "address": emp.get("address") or {},
+        "settings": emp.get("settings") or {},
+        "defaults": emp.get("defaults") or {},
+        "custom_fields": emp.get("custom_fields") or [],
+
+        # 🧾 RAW PAYLOAD (CRITICAL)
+        "raw_data": emp,
+    }
+
+# class ShyfterEmployeesView(APIView):
+#     def get(self, request):
+#         location = request.GET.get("location") or "Frietchalet"
+#         headers = _get_shyfter_headers(location)
+
+#         all_employees = []
+#         next_url = f"{settings.SHYFTER_API_URL}/employees"  # first page URL
+
+#         try:
+#             while next_url:  # keep fetching until 'next' is null
+#                 res = requests.get(next_url, headers=headers)
+#                 res.raise_for_status()
+#                 data = res.json()
+
+#                 # append current page data
+#                 all_employees.extend(data.get("data", []))
+
+#                 # update next_url for next iteration
+#                 next_url = data.get("links", {}).get("next")  
+
+#             return Response({"employees": all_employees}, status=200)
+
+#         except requests.exceptions.RequestException as e:
+#             return Response({"error": str(e)}, status=500)
 class ShyfterEmployeesView(APIView):
-    def get(self, request):
-        location = request.GET.get("location") or "Frietchalet"
+    """Fetch ALL Shyfter employees, save locally, and return saved employees."""
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *_, **__):
+        location = request.query_params.get("location") or "Frietchalet"
         headers = _get_shyfter_headers(location)
 
         all_employees = []
-        next_url = f"{settings.SHYFTER_API_URL}/employees"  # first page URL
+        next_url = f"{settings.SHYFTER_API_URL}/employees"
 
         try:
-            while next_url:  # keep fetching until 'next' is null
+            # 🔁 Pagination loop (Shyfter-style)
+            while next_url:
+                time.sleep(0.4)
                 res = requests.get(next_url, headers=headers)
                 res.raise_for_status()
                 data = res.json()
 
-                # append current page data
                 all_employees.extend(data.get("data", []))
+                next_url = data.get("links", {}).get("next")
 
-                # update next_url for next iteration
-                next_url = data.get("links", {}).get("next")  
+            saved_employees = []
+            skipped = 0
 
-            return Response({"employees": all_employees}, status=200)
+            # 💾 Save to DB (Lightspeed-style)
+            for emp in all_employees:
+                if not isinstance(emp, dict):
+                    skipped += 1
+                    continue
 
-        except requests.exceptions.RequestException as e:
-            return Response({"error": str(e)}, status=500)
+                emp_id = emp.get("id")
+                if not emp_id:
+                    skipped += 1
+                    continue
+
+                obj, _ = ShyfterEmployee.objects.update_or_create(
+                    id=str(emp.get("id")),
+                    defaults=_map_shyfter_employee_to_model_fields(emp, location),
+                )
+                saved_employees.append(obj)
+
+            serializer = ShyfterEmployeeSeriallizer(saved_employees, many=True)
+
+            return Response(
+                {
+                    "total_fetched": len(all_employees),
+                    "total_saved": len(saved_employees),
+                    "skipped": skipped,
+                    "location": location,
+                    "employees": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as exc:
+            _logger.exception("Error fetching Shyfter employees")
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ShyfterEmployeeClockingsView(APIView):
