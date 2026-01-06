@@ -23,8 +23,8 @@ def normalize_row(row, group_by="location"):
         "void_total": 0,
         "void_total_ly": 0,
 
-        "guest_total": row["totalpayment_current"],
-        "guest_total_ly": row["totalpayment_previous"],
+        "guest_total": row["totalcustomer_current"]+row["total_guest_count_current"],
+        "guest_total_ly": row["totalcustomer_previous"]+row["total_guest_count_previous"],
 
         "budget": 0,
         "budget_ly": 0,

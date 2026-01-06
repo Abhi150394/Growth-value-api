@@ -26,12 +26,15 @@ def fetch_monthly_stats_raw(start_date, end_date):
             o.location,
             o.creation_date::date AS day_date,
             (p.elem->>'amount')::numeric AS payment_amount,
+            (t.elem->>'amount')::numeric as total_guest_count,
             CASE WHEN o.delivery_date IS NOT NULL 
                 THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
             END AS delivery_minutes,
             o.customer_id
         FROM lightspeed_orders o
         LEFT JOIN LATERAL jsonb_array_elements(o.order_payments) AS p(elem)
+            ON TRUE
+        left join lateral jsonb_array_elements(o.order_items) as t(elem)
             ON TRUE
         WHERE o.creation_date >= %s
           AND o.creation_date < %s
@@ -43,6 +46,7 @@ def fetch_monthly_stats_raw(start_date, end_date):
             COUNT(*) AS total_current,
             COUNT(DISTINCT customer_id) AS total_customer_current,
             SUM(payment_amount) AS total_payment_current,
+            MAX(total_guest_count) as total_guest_count_current,
             AVG(delivery_minutes) AS avg_delivery_minutes_current
         FROM cte_current_raw
         GROUP BY location, day_date
@@ -52,6 +56,7 @@ def fetch_monthly_stats_raw(start_date, end_date):
             o.location,
             o.creation_date::date AS day_date,
             (p.elem->>'amount')::numeric AS payment_amount,
+            (t.elem->>'amount')::numeric as total_guest_count,
             CASE WHEN o.delivery_date IS NOT NULL 
                 THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
             END AS delivery_minutes,
@@ -59,6 +64,8 @@ def fetch_monthly_stats_raw(start_date, end_date):
         FROM lightspeed_orders o
         LEFT JOIN LATERAL jsonb_array_elements(o.order_payments) AS p(elem)
             ON TRUE
+        left join lateral jsonb_array_elements(o.order_items) as t(elem)
+        on true
         WHERE o.creation_date >= %s
           AND o.creation_date < %s
     ),
@@ -69,6 +76,7 @@ def fetch_monthly_stats_raw(start_date, end_date):
             COUNT(*) AS total_previous,
             COUNT(DISTINCT customer_id) AS total_customer_previous,
             SUM(payment_amount) AS total_payment_previous,
+            MAX(total_guest_count) as total_guest_count_previous,
             AVG(delivery_minutes) AS avg_delivery_minutes_previous
         FROM cte_previous_raw
         GROUP BY location, day_date
@@ -84,6 +92,8 @@ def fetch_monthly_stats_raw(start_date, end_date):
         ROUND(COALESCE(p.total_previous, 0),2) AS totalOrder_previous,
         ROUND(COALESCE(c.total_customer_current, 0),2) AS totalCustomer_current,
         ROUND(COALESCE(p.total_customer_previous, 0),2) AS totalCustomer_previous,
+        ROUND(COALESCE(c.total_guest_count_current, 0),2) AS total_guest_count_current,
+        ROUND(COALESCE(p.total_guest_count_previous, 0),2) AS total_guest_count_previous,
         ROUND(COALESCE(c.total_payment_current, 0),2) AS totalPayment_current,
         ROUND(COALESCE(p.total_payment_previous, 0),2) AS totalPayment_previous,
         ROUND(COALESCE(c.avg_delivery_minutes_current, 0),2) AS avgDelivery_minutes_current,

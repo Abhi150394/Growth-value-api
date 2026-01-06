@@ -411,6 +411,70 @@ class ShyfterEmployeeClocking(models.Model):
     def __str__(self):
         return f"{self.employee_id} | {self.work_date}"
 
+class ShyfterEmployeeShift(models.Model):
+    """
+    Planned / published shifts from Shyfter.
+    """
+
+    id = models.CharField(
+        max_length=255,
+        primary_key=True,
+        help_text="Shyfter shift ID"
+    )
+
+    employee = models.ForeignKey(
+        "ShyfterEmployee",
+        on_delete=models.CASCADE,
+        related_name="shifts"
+    )
+
+    # 🗓 Timing
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+
+    work_date = models.DateField()
+
+    duration_minutes = models.PositiveIntegerField(default=0)
+
+    # 🧾 Meta
+    published = models.BooleanField(default=False)
+    type = models.CharField(max_length=50)  # planned / draft / etc
+
+    cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    # ⏸ Breaks
+    breaks = models.JSONField(default=dict, blank=True)
+
+    # 🧠 Social secretary
+    social_secretary = models.JSONField(default=dict, blank=True)
+
+    # 📍 Location
+    location = models.CharField(max_length=100)
+
+    # 🧾 Raw payload (CRITICAL)
+    raw_data = models.JSONField(default=dict, blank=True)
+
+    # ⏱ Audit
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "shyfter_employee_shift"
+        ordering = ["-start"]
+        indexes = [
+            models.Index(fields=["employee", "work_date"]),
+            models.Index(fields=["location"]),
+        ]
+
+    def __str__(self):
+        return f"{self.employee_id} | {self.work_date}"
+
+
 
 
 class Wishlist(models.Model):

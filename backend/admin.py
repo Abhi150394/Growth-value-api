@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserData, Payment, Orders, Searches, Products, Wishlist, Scraper, Tag, Vendor,ShyfterEmployee,ShyfterEmployeeClocking
+from .models import UserData, Payment, Orders, Searches, Products, Wishlist, Scraper, Tag, Vendor,ShyfterEmployee,ShyfterEmployeeClocking,ShyfterEmployeeShift
 
 # Register your models here.
 admin.site.register(UserData)
@@ -78,7 +78,11 @@ class AdminShyfterEmployeeClocking(admin.ModelAdmin):
     def employee_role(self,obj):
         return obj.employee.type if obj.employee else "-"
         
-    
+class AdminShyfterEmployeeShift(admin.ModelAdmin):
+    search_fields=("id","location",)
+    list_display=("id","location",)
+    list_filter=("id","location",)   
+admin.site.register(ShyfterEmployeeShift,AdminShyfterEmployeeShift)
 admin.site.register(ShyfterEmployeeClocking,AdminShyfterEmployeeClocking)
 admin.site.register(ShyfterEmployee,AdminShyfterEmployee)
 admin.site.register(Products, AdminProducts)

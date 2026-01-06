@@ -26,6 +26,7 @@ class LightspeedOrderAdmin(admin.ModelAdmin):
         'external_reference',
         'note',
         'customer_id',
+        'creation_date',
     )
     readonly_fields = ('id', 'created_at', 'updated_at', 'raw_data')
     date_hierarchy = 'creation_date'

@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import serializers
-from .models import ShyfterEmployee, ShyfterEmployeeClocking, UserData, Payment, Searches, Orders, Wishlist, Products, Scraper, Vendor, Tag
+from .models import ShyfterEmployee, ShyfterEmployeeClocking, ShyfterEmployeeShift, UserData, Payment, Searches, Orders, Wishlist, Products, Scraper, Vendor, Tag
 
 _logger = logging.getLogger(__name__)
 
@@ -344,3 +344,10 @@ class ShyfterEmployeeClockingSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShyfterEmployeeClocking
         fields = "__all__"
+
+class ShyfterEmployeeShiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShyfterEmployeeShift
+        fields = "__all__"
+        read_only_fields = ['created_at','updated_at']
+        

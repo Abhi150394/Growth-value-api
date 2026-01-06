@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import date, datetime
 from django.utils.dateparse import parse_datetime
 import time
 import requests
@@ -7,6 +7,7 @@ from time import sleep
 from rest_framework import viewsets
 from django.db import connection
 
+from backend.services.iter_90_day_ranges import iter_90_day_ranges
 from backend.services.monthly_stats_builder import build_monthly_stats_response, build_orderType_stats_response, build_product_category_stats_reponse, build_product_item_stats_response
 from backend.services.monthly_stats_sql import fetch_monthly_stats_raw, fetch_sales_orderType_raw, fetch_sales_productCategory_raw, fetch_sales_productItem_raw
 from .serializers import (
@@ -14,7 +15,7 @@ from .serializers import (
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
     )
 from .models import (
-    ShyfterEmployee, ShyfterEmployeeClocking, UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
+    ShyfterEmployee, ShyfterEmployeeClocking, ShyfterEmployeeShift, UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
     UserDataResetPassword
     )
 from lightspeed_integration.models import LightspeedProduct,LightspeedProductGroup
@@ -899,6 +900,116 @@ def _map_shyfter_employee_to_model_fields(emp, location):
         # 🧾 RAW PAYLOAD (CRITICAL)
         "raw_data": emp,
     }
+    
+
+def _safe_parse_dt(value):
+    if isinstance(value, str):
+        return parse_datetime(value)
+    return None
+
+
+def _map_shift_to_model_fields(shift, employee, location):
+    start_dt = _safe_parse_dt(shift.get("start"))
+    end_dt = _safe_parse_dt(shift.get("end"))
+
+    duration = 0
+    if start_dt and end_dt and end_dt >= start_dt:
+        duration = int((end_dt - start_dt).total_seconds() / 60)
+
+    return {
+        "employee": employee,
+        "start": start_dt,
+        "end": end_dt,
+        "work_date": start_dt.date() if start_dt else None,
+        "duration_minutes": duration,
+
+        "published": shift.get("published", False),
+        "type": shift.get("type"),
+        "cost": shift.get("cost"),
+
+        "breaks": shift.get("breaks") or {},
+        "social_secretary": shift.get("socialSecretary") or {},
+
+        "location": location,
+        "raw_data": shift,
+    }
+
+
+class ShyfterAllEmployeesShiftsView(APIView):
+    """
+    Sync planned shifts for all employees or a single employee.
+    """
+
+    def get(self, request):
+        location = request.query_params.get("location") or "Frietchalet"
+        start = request.query_params.get("start", "2021-01-01")
+        end = request.query_params.get("end")
+
+        employee_id = request.query_params.get("employee_id")
+
+        start_date = date.fromisoformat(start)
+        end_date = date.fromisoformat(end) if end else date.today()
+
+        headers = _get_shyfter_headers(location)
+
+        # 👤 Employees selection
+        if employee_id:
+            employees = ShyfterEmployee.objects.filter(
+                id=employee_id,
+                location=location,
+            )
+            if not employees.exists():
+                return Response(
+                    {"error": "Employee not found"},
+                    status=404
+                )
+        else:
+            employees = ShyfterEmployee.objects.filter(location=location)
+
+        total_fetched = total_saved = skipped = 0
+
+        for employee in employees:
+            for win_start, win_end in iter_90_day_ranges(start_date, end_date):
+
+                next_url = (
+                    f"{settings.SHYFTER_API_URL}/employees/"
+                    f"{employee.id}/shifts"
+                    f"?start={win_start}&end={win_end}"
+                )
+
+                while next_url:
+                    time.sleep(1)
+                    res = requests.get(next_url, headers=headers)
+                    res.raise_for_status()
+                    payload = res.json()
+
+                    shifts = payload.get("data", [])
+                    total_fetched += len(shifts)
+                    print(shifts)
+                    for s in shifts:
+                        if not s.get("id"):
+                            skipped += 1
+                            continue
+
+                        ShyfterEmployeeShift.objects.update_or_create(
+                            id=str(s["id"]),
+                            defaults=_map_shift_to_model_fields(
+                                s, employee, location
+                            ),
+                        )
+                        total_saved += 1
+
+                    next_url = payload.get("links", {}).get("next")
+
+        return Response({
+            "location": location,
+            "employees_processed": employees.count(),
+            "total_fetched": total_fetched,
+            "total_saved": total_saved,
+            "skipped": skipped,
+        })
+
+
 def _safe_parse_datetime(value):
     if not value or not isinstance(value, str):
         return None
