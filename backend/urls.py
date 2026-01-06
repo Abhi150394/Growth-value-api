@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 from . import views
 from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location,lightspeed_sales_productItem,lightspeed_product_Items,lightspeed_product_Categories,lightspeed_sales_productCategory,lightspeed_sales_orderType
-from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterEmployeeShiftsView
+from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterAllEmployeesClockingsView,ShyfterEmployeeShiftsView
 
 router = routers.DefaultRouter()
 router.register(r'order', views.OrderViewSet)
@@ -48,6 +48,7 @@ urlpatterns = [
     path("shipday/orders/<str:ordernumber>/",ShipdayOrdersDetailsView.as_view(),name="shipday-orders-details"),
     path("shyfter/employees/", ShyfterEmployeesView.as_view(), name="shyfter-employees"),
     path("shyfter/employees/<str:employee_id>/clockings/", ShyfterEmployeeClockingsView.as_view()),
+    path("shyfter/employees/clockings/",ShyfterAllEmployeesClockingsView.as_view()),
     path("shyfter/employees/<str:employee_id>/shifts/", ShyfterEmployeeShiftsView.as_view()),
     path('upload-xml/', XMLUploadView.as_view(), name='upload-xml'),
     path("reports/lightspeed/sales-area/", lightspeed_sales_area),

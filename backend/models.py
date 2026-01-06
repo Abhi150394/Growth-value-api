@@ -336,6 +336,82 @@ class ShyfterEmployee(models.Model):
     def __str__(self):
         return f"Shyfter employee #{self.id} - {self.display_name or 'Unnamed'}"
 
+class ShyfterEmployeeClocking(models.Model):
+    """
+    Store Shyfter employee clockings (working times).
+    """
+
+    # 🔑 External ID
+    id = models.CharField(
+        max_length=255,
+        primary_key=True,
+        help_text="Shyfter clocking ID"
+    )
+
+    employee = models.ForeignKey(
+        "ShyfterEmployee",
+        on_delete=models.CASCADE,
+        related_name="clockings"
+    )
+
+    shift_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    # ⏱ Timing
+    start = models.DateTimeField()
+    end = models.DateTimeField(null=True, blank=True)
+
+    work_date = models.DateField(
+        help_text="Derived date from start time"
+    )
+
+    duration_minutes = models.PositiveIntegerField(
+        default=0,
+        help_text="Total worked minutes"
+    )
+
+    # 💰 Cost & approval
+    cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    approved = models.BooleanField(default=False)
+    comment = models.TextField(null=True, blank=True)
+
+    # 📍 Location
+    location = models.CharField(max_length=100)
+
+    # 🧩 Nested JSON
+    skills = models.JSONField(default=list, blank=True)
+    clock_in = models.JSONField(default=dict, blank=True)
+    clock_out = models.JSONField(default=dict, blank=True)
+    breaks = models.JSONField(default=list, blank=True)
+
+    # 🧾 Raw payload (CRITICAL)
+    raw_data = models.JSONField(default=dict, blank=True)
+
+    # ⏱ Audit
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "shyfter_employee_clocking"
+        ordering = ["-start"]
+        indexes = [
+            models.Index(fields=["employee", "work_date"]),
+            models.Index(fields=["location"]),
+        ]
+
+    def __str__(self):
+        return f"{self.employee_id} | {self.work_date}"
+
+
 
 class Wishlist(models.Model):
     user_id = models.ForeignKey(UserData, on_delete=models.PROTECT, related_name="wishlists", null=True)

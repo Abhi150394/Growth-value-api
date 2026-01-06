@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from django.utils.dateparse import parse_datetime
 import time
 import requests
 from time import sleep
@@ -13,7 +14,7 @@ from .serializers import (
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
     )
 from .models import (
-    ShyfterEmployee, UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
+    ShyfterEmployee, ShyfterEmployeeClocking, UserData, Payment, Orders, Searches, Wishlist, Products, Scraper, Tag, Vendor,
     UserDataResetPassword
     )
 from lightspeed_integration.models import LightspeedProduct,LightspeedProductGroup
@@ -898,7 +899,46 @@ def _map_shyfter_employee_to_model_fields(emp, location):
         # 🧾 RAW PAYLOAD (CRITICAL)
         "raw_data": emp,
     }
+def _safe_parse_datetime(value):
+    if not value or not isinstance(value, str):
+        return None
+    return parse_datetime(value)
 
+def _map_clocking_to_model_fields(clocking, employee, location):
+    start_dt = _safe_parse_datetime(clocking.get("start"))
+    end_dt = _safe_parse_datetime(clocking.get("end"))
+
+    duration = 0
+   
+    if start_dt and end_dt:
+        if end_dt >= start_dt:
+            duration = int((end_dt - start_dt).total_seconds() / 60)
+        else:
+            # 🚨 Invalid clocking (end before start)
+            duration = 0
+            # optional: mark in raw_data for later audit
+
+    return {
+        "employee": employee,
+        "shift_id": clocking.get("shift"),
+        "start": start_dt,
+        "end": end_dt,
+        "work_date": start_dt.date() if start_dt else None,
+        "duration_minutes": duration,
+        "cost": clocking.get("cost"),
+        "approved": clocking.get("approved", False),
+        "comment": clocking.get("comment"),
+        "location": location,
+
+        # JSON
+        "skills": clocking.get("skills") or [],
+        "clock_in": clocking.get("in") or {},
+        "clock_out": clocking.get("out") or {},
+        "breaks": clocking.get("breaks") or [],
+
+        # RAW
+        "raw_data": clocking,
+    }
 # class ShyfterEmployeesView(APIView):
 #     def get(self, request):
 #         location = request.GET.get("location") or "Frietchalet"
@@ -998,6 +1038,77 @@ class ShyfterEmployeeClockingsView(APIView):
         except requests.exceptions.RequestException as e:
             return Response({"error": str(e)}, status=500)
 
+class ShyfterAllEmployeesClockingsView(APIView):
+    """
+    Fetch clockings for ALL employees or a single employee if employee_id is provided.
+    """
+
+    def get(self, request):
+        location = request.query_params.get("location") or "Frietchalet"
+        start_date = request.query_params.get("start", "2021-11-01")
+        employee_id = request.query_params.get("employee_id")  
+
+        headers = _get_shyfter_headers(location)
+
+        # 🎯 Decide employee queryset dynamically
+        if employee_id:
+            employees = ShyfterEmployee.objects.filter(
+                id=employee_id,
+                # location=location,
+            )
+            if not employees.exists():
+                return Response(
+                    {"error": "Employee not found for this location"},
+                    status=404
+                )
+        else:
+            employees = ShyfterEmployee.objects.filter(
+                location=location,
+            )
+
+        total_fetched = 0
+        total_saved = 0
+        skipped = 0
+
+        for employee in employees:
+            next_url = (
+                f"{settings.SHYFTER_API_URL}/employees/"
+                f"{employee.id}/clockings?start={start_date}"
+            )
+
+            while next_url:
+                time.sleep(0.4)
+                res = requests.get(next_url, headers=headers)
+                res.raise_for_status()
+                payload = res.json()
+
+                clockings = payload.get("data", [])
+                total_fetched += len(clockings)
+                print(clockings)
+                for c in clockings:
+                    if not c.get("id"):
+                        skipped += 1
+                        continue
+
+                    ShyfterEmployeeClocking.objects.update_or_create(
+                        id=str(c["id"]),
+                        defaults=_map_clocking_to_model_fields(
+                            c, employee, location
+                        ),
+                    )
+                    total_saved += 1
+
+                next_url = payload.get("links", {}).get("next")
+
+        return Response({
+            "location": location,
+            "employee_mode": "single" if employee_id else "all",
+            "employee_id": employee_id,
+            "employees_processed": employees.count(),
+            "total_fetched": total_fetched,
+            "total_saved": total_saved,
+            "skipped": skipped,
+        })
 
 class ShyfterEmployeeShiftsView(APIView):
     def get(self, request, employee_id):
