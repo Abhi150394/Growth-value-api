@@ -6,7 +6,9 @@ import requests
 from time import sleep
 from rest_framework import viewsets
 from django.db import connection
-
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+import logging
 from backend.services.iter_90_day_ranges import iter_90_day_ranges
 from backend.services.monthly_stats_builder import build_monthly_stats_response, build_orderType_stats_response, build_product_category_stats_reponse, build_product_item_stats_response
 from backend.services.monthly_stats_sql import fetch_monthly_stats_raw, fetch_sales_orderType_raw, fetch_sales_productCategory_raw, fetch_sales_productItem_raw
@@ -951,6 +953,20 @@ class ShyfterAllEmployeesShiftsView(APIView):
         end_date = date.fromisoformat(end) if end else date.today()
 
         headers = _get_shyfter_headers(location)
+        session = requests.Session()
+        session.headers.update(headers)
+
+        retry_strategy = Retry(
+            total=5,
+            backoff_factor=1.5,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["GET"],
+        )
+
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
 
         # 👤 Employees selection
         if employee_id:
@@ -978,9 +994,22 @@ class ShyfterAllEmployeesShiftsView(APIView):
                 )
 
                 while next_url:
-                    time.sleep(1)
-                    res = requests.get(next_url, headers=headers)
-                    res.raise_for_status()
+                    time.sleep(0.6)
+                    # res = requests.get(next_url, headers=headers)
+                    # res.raise_for_status()
+                    try:
+                        res = session.get(next_url, timeout=20)
+                        res.raise_for_status()
+                    except requests.exceptions.RequestException as exc:
+                        _logger.warning(
+                            "Shyfter shifts failed for employee=%s window=%s→%s : %s",
+                            employee.id,
+                            win_start,
+                            win_end,
+                            exc,
+                        )
+                        break  # move to next window / employee
+
                     payload = res.json()
 
                     shifts = payload.get("data", [])

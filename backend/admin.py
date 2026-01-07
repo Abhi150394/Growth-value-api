@@ -80,8 +80,16 @@ class AdminShyfterEmployeeClocking(admin.ModelAdmin):
         
 class AdminShyfterEmployeeShift(admin.ModelAdmin):
     search_fields=("id","location",)
-    list_display=("id","location",)
-    list_filter=("id","location",)   
+    list_display=("id","employee_id","employee_role","location","duration_minutes","cost","breaks","social_secretary")
+    list_filter=("location","employee__type")   
+    @admin.display(
+        description="Employee Type",
+        ordering="employee__type",
+    )
+    def employee_role(self,obj):
+        return obj.employee.type if obj.employee else "-"
+    
+    
 admin.site.register(ShyfterEmployeeShift,AdminShyfterEmployeeShift)
 admin.site.register(ShyfterEmployeeClocking,AdminShyfterEmployeeClocking)
 admin.site.register(ShyfterEmployee,AdminShyfterEmployee)
