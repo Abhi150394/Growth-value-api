@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.db import connection
 
+#==============================Sales===============================
 def fetch_monthly_stats_raw(start_date, end_date):
     prev_start = start_date.replace(year=start_date.year - 1)
     prev_end = end_date.replace(year=end_date.year - 1)
@@ -256,7 +257,6 @@ def fetch_sales_orderType_raw(start_date,end_date):
         columns= [col[0] for col in cursor.description]
         return [dict(zip(columns,row)) for row in cursor.fetchall()]
     
-
 def fetch_sales_productItem_raw(start_date, end_date):
     prev_start = start_date.replace(year=start_date.year - 1)
     prev_end = end_date.replace(year=end_date.year - 1)
@@ -584,4 +584,109 @@ def fetch_sales_productCategory_raw(start_date,end_date):
     with connection.cursor() as cursor:
         cursor.execute(sql,params)
         columns = [col[0] for col in cursor.description]
+        return [dict(zip(columns,row)) for row in cursor.fetchall()]
+#==============================Labour===============================
+def fetch_labour_area_raw(start_date,end_date):
+    prev_start=start_date.replace(year=start_date.year-1)
+    prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql="""
+    WITH current_dates AS (
+        SELECT generate_series(
+            %s::date,
+            %s::date,
+            INTERVAL '1 day'
+        )::date AS curr_date
+    ),
+    previous_dates AS (
+        SELECT 
+            curr_date,
+            (curr_date - INTERVAL '1 year')::date AS prev_date
+        FROM current_dates
+    ),
+    cte_current_raw AS (
+        SELECT
+            c.location,
+            c.id,
+            c.work_date::date AS day_date,
+            c.duration_minutes as work_duration,
+            CASE
+				WHEN c.cost=0 then (s.cost*c.duration_minutes)/s.duration_minutes else c.cost
+			END as duration_costing,
+			--c.cost as duration_costing,
+            c.shift_id as shift_id
+        FROM shyfter_employee_clocking c
+		JOIN shyfter_employee_shift s
+		ON c.shift_id = s.id
+        where c.work_date >= %s
+          AND c.work_date < %s
+    ),
+    cte_current as (
+    select location,day_date,
+    count(*) as total_current_employee,
+    sum(work_duration) as total_work_duration,
+    sum(duration_costing) as total_duration_costing
+    from cte_current_raw
+    group by location,day_date
+    ),
+    cte_previous_raw AS (
+        SELECT
+            c.location,
+            c.id,
+            c.work_date::date AS day_date,
+            c.duration_minutes as work_duration,
+			CASE
+				WHEN c.cost=0 then (s.cost*c.duration_minutes)/s.duration_minutes else c.cost
+			END as duration_costing,
+            --c.cost as duration_costing,
+            c.shift_id as shift_id
+        FROM shyfter_employee_clocking c
+		JOIN shyfter_employee_shift s
+		ON c.shift_id = s.id
+        where c.work_date >= %s
+          AND c.work_date < %s
+    ),
+    cte_previous as (
+    select location,day_date,
+    count(*) as total_previous_employee,
+    sum(work_duration) as total_work_duration,
+    sum(duration_costing) as total_duration_costing
+    from cte_current_raw
+    group by location,day_date
+    ),
+    all_location as (
+    select distinct location from shyfter_employee_clocking
+    )
+    select 
+    loc.location,
+    to_char(pd.curr_date,'DD/MM/YYYY') as current_day,
+    to_char(pd.prev_date,'DD/MM/YYYY') as previous_day,
+    round(coalesce(c.total_current_employee,0),2) as total_current_employee,
+    round(coalesce(p.total_previous_employee,0),2) as total_previous_employee,
+    round(coalesce(c.total_duration_costing,0),2) as total_current_duration_costing,
+    round(coalesce(p.total_duration_costing,0),2) as total_previous_duration_costing,
+    round(coalesce(c.total_work_duration,0),2) as total_current_work_duration,
+    round(coalesce(p.total_work_duration,0),2) as total_previous_work_duration
+    from previous_dates pd 
+    cross join all_location loc
+    left join cte_current c
+    	on c.location=loc.location
+    	and c.day_date =pd.curr_date 
+    left join cte_previous p
+    	on p.location=loc.location
+    	and p.day_date =pd.prev_date
+    order by loc.location,pd.curr_date 
+    """
+    params=[
+        start_date,
+        end_date,
+        start_date,
+        end_date+timedelta(days=1),
+        prev_start,
+        prev_end+timedelta(days=1)
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql,params)
+        columns=[col[0] for col in cursor.description]
         return [dict(zip(columns,row)) for row in cursor.fetchall()]

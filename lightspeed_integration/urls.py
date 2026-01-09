@@ -15,7 +15,8 @@ from .views import (
     EmployeeClocktimeView,
     InventoryProductView,
     InventoryProductGroupView,
-    FinanceReceiptActualView
+    FinanceReceiptActualView,
+    LightspeedReceiptFullDumpView
 )
 
 urlpatterns = [
@@ -35,5 +36,6 @@ urlpatterns = [
     path("employees/clocktime/", EmployeeClocktimeView.as_view(), name="lightspeed-employee-clocktime"),
     path("inventory/products/", InventoryProductView.as_view(), name="lightspeed-inventory-products"),
     path("inventory/productgroups/", InventoryProductGroupView.as_view(), name="lightspeed-inventory-productgroups"),
+    path("finance/actual-receipts/dumpdata/",LightspeedReceiptFullDumpView.as_view()),
     
 ]

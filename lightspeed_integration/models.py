@@ -150,3 +150,73 @@ class LightspeedProductGroup(models.Model):
 
     def __str__(self):
         return f"Lightspeed Product Group #{self.id} - {self.name or 'Unnamed'}"
+
+
+class LightspeedReceipt(models.Model):
+    """
+    Stores Lightspeed financial receipts/orders.
+    One row = one Lightspeed order.
+    """
+
+    # Lightspeed order ID (PRIMARY KEY)
+    id = models.BigIntegerField(primary_key=True)
+
+    # Basic identifiers
+    uuid = models.UUIDField(null=True, blank=True)
+    order_id = models.BigIntegerField(null=True, blank=True)
+
+    # Relationships
+    table_id = models.BigIntegerField(null=True, blank=True)
+    floor_id = models.BigIntegerField(null=True, blank=True)
+    customer_id = models.BigIntegerField(null=True, blank=True)
+    customer_uuid = models.UUIDField(null=True, blank=True)
+    user_id = models.BigIntegerField(null=True, blank=True)
+    parent_id = models.BigIntegerField(null=True, blank=True)
+
+    # Status & type
+    status = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=50, null=True, blank=True)
+
+    # Dates
+    creation_date = models.DateTimeField(null=True, blank=True)
+    modification_date = models.DateTimeField(null=True, blank=True)
+    delivery_date = models.DateTimeField(null=True, blank=True)
+    closing_date = models.DateTimeField(null=True, blank=True)
+    print_date = models.DateTimeField(null=True, blank=True)
+
+    # Amounts
+    total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_without_tax = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    # Counts
+    number_of_customers = models.IntegerField(default=0)
+    current_course = models.IntegerField(null=True, blank=True)
+
+    # JSON payloads (store nested data as-is)
+    items = models.JSONField(default=list, blank=True)
+    payments = models.JSONField(default=list, blank=True)
+    tax_info = models.JSONField(default=list, blank=True)
+    action_items = models.JSONField(default=list, blank=True)
+
+    # Full raw object (IMPORTANT)
+    raw_data = models.JSONField(default=dict, blank=True)
+
+    # Location
+    location = models.CharField(max_length=100, default="Dendermonde")
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "lightspeed_financial_receipts"
+        ordering = ["-creation_date", "-id"]
+        indexes = [
+            models.Index(fields=["creation_date"]),
+            models.Index(fields=["status"]),
+            models.Index(fields=["type"]),
+            models.Index(fields=["location"]),
+        ]
+
+    def __str__(self):
+        return f"Receipt #{self.id}"

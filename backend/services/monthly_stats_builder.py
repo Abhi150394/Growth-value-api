@@ -41,6 +41,119 @@ def normalize_row(row, group_by="location"):
 
     return data
 
+def normalized_labour_area_row(row,group_by="location"):
+    data={
+        "period":datetime.strptime(row["current_day"],"%d/%m/%Y").date().isoformat(),
+        "period_ly":datetime.strptime(row["previous_day"],"%d/%m/%Y").date().isoformat(),
+        "actual_base_cost":row["total_current_duration_costing"],
+        "actual_base_cost_ly":row["total_previous_duration_costing"],
+        "actual_fully_loaded_cost":0,
+        "actual_fully_loaded_cost_ly":0,
+        "actual_shift_num_mins":row["total_current_work_duration"],
+        "actual_shift_num_mins_ly":row["total_previous_work_duration"],
+        "forecast_base_cost":0,
+        "forecast_base_cost_ly":0,
+        "forecast_fully_loaded_cost":0,
+        "forecast_fully_loaded_cost_ly":0,
+        "forecast_shift_num_mins":0,
+        "forecast_shift_num_mins_ly":0,
+        "total":row["total_current_employee"],
+        "total_ly":row["total_previous_employee"],
+    }
+    
+    if group_by=="location":
+        data["location"]=row.get("location","").lower()
+    else:
+        data[group_by]=row.get(group_by,"").lower()
+    return data
+
+def labour_area_build_overall(detail):
+    by_day = defaultdict(lambda: {
+        "actual_base_cost": 0,
+        "actual_base_cost_ly": 0,
+
+        "actual_fully_loaded_cost": 0,
+        "actual_fully_loaded_cost_ly": 0,
+
+        "actual_shift_num_mins": 0,
+        "actual_shift_num_mins_ly": 0,
+
+        "forecast_base_cost": 0,
+        "forecast_base_cost_ly": 0,
+
+        "forecast_fully_loaded_cost": 0,
+        "forecast_fully_loaded_cost_ly": 0,
+
+        "forecast_shift_num_mins": 0,
+        "forecast_shift_num_mins_ly": 0,
+
+        "total_employee": 0,
+        "total_employee_ly": 0,
+    })
+
+    # 🔄 Aggregate rows
+    for rows in detail.values():
+        for r in rows:
+            d = by_day[r["period"]]
+
+            d["actual_base_cost"] += r["actual_base_cost"]
+            d["actual_base_cost_ly"] += r["actual_base_cost_ly"]
+
+            d["actual_fully_loaded_cost"] += r["actual_fully_loaded_cost"]
+            d["actual_fully_loaded_cost_ly"] += r["actual_fully_loaded_cost_ly"]
+
+            d["actual_shift_num_mins"] += r["actual_shift_num_mins"]
+            d["actual_shift_num_mins_ly"] += r["actual_shift_num_mins_ly"]
+
+            d["forecast_base_cost"] += r["forecast_base_cost"]
+            d["forecast_base_cost_ly"] += r["forecast_base_cost_ly"]
+
+            d["forecast_fully_loaded_cost"] += r["forecast_fully_loaded_cost"]
+            d["forecast_fully_loaded_cost_ly"] += r["forecast_fully_loaded_cost_ly"]
+
+            d["forecast_shift_num_mins"] += r["forecast_shift_num_mins"]
+            d["forecast_shift_num_mins_ly"] += r["forecast_shift_num_mins_ly"]
+
+            d["total_employee"] += r["total"]
+            d["total_employee_ly"] += r["total_ly"]
+
+    # 📤 Final output
+    output = []
+    for day, d in sorted(by_day.items()):
+        output.append({
+            "period": day,
+            "period_ly": datetime.fromisoformat(day)
+                .replace(year=datetime.fromisoformat(day).year - 1)
+                .date().isoformat(),
+
+            # 💰 Actual
+            "actual_base_cost": round(d["actual_base_cost"], 2),
+            "actual_base_cost_ly": round(d["actual_base_cost_ly"], 2),
+
+            "actual_fully_loaded_cost": round(d["actual_fully_loaded_cost"], 2),
+            "actual_fully_loaded_cost_ly": round(d["actual_fully_loaded_cost_ly"], 2),
+
+            # ⏱️ Actual minutes
+            "actual_shift_num_mins": round(d["actual_shift_num_mins"], 2),
+            "actual_shift_num_mins_ly": round(d["actual_shift_num_mins_ly"], 2),
+
+            # 🔮 Forecast
+            "forecast_base_cost": round(d["forecast_base_cost"], 2),
+            "forecast_base_cost_ly": round(d["forecast_base_cost_ly"], 2),
+
+            "forecast_fully_loaded_cost": round(d["forecast_fully_loaded_cost"], 2),
+            "forecast_fully_loaded_cost_ly": round(d["forecast_fully_loaded_cost_ly"], 2),
+
+            "forecast_shift_num_mins": round(d["forecast_shift_num_mins"], 2),
+            "forecast_shift_num_mins_ly": round(d["forecast_shift_num_mins_ly"], 2),
+
+            # 👥 Headcount
+            "total_employee": d["total_employee"],
+            "total_employee_ly": d["total_employee_ly"],
+        })
+
+    return output
+
 
 def build_overall(detail):
     by_day = defaultdict(lambda: {
@@ -297,6 +410,35 @@ def build_product_category_stats_reponse(raw_data,start_date,end_date):
     return {
         "overall":overall,
         "detail":product_details,
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
+    
+    
+#===========================LAbour=======================
+def build_labourArea_stats(raw_data,start_date,end_date):
+    detail = defaultdict(list)
+    
+    for row in raw_data:
+        normalized = normalized_labour_area_row(row)
+        detail[normalized["location"]].append(normalized)
+        
+    overall=labour_area_build_overall(detail)
+
+    return {
+        "overall":overall,
+        "detail": {
+            "all": overall,
+            "south": detail.get("tipzakske", []),
+            "east": detail.get("frietbooster", []),
+            "west": detail.get("frietchalet", []),
+        },
         "compare_period":{
             "from":start_date.replace(year=start_date.year-1).isoformat(),
             "to":end_date.replace(year=end_date.year-1).isoformat(),

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LightspeedOrder, LightspeedProduct, LightspeedProductGroup
+from .models import LightspeedOrder, LightspeedProduct, LightspeedProductGroup,LightspeedReceipt
 
 
 @admin.register(LightspeedOrder)
@@ -146,3 +146,20 @@ class LightspeedProductGroupAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+@admin.register(LightspeedReceipt)
+class LightspeedReceiptAdmin(admin.ModelAdmin):
+        list_display = (
+        'id',
+        "customer_id",
+        'created_at',
+        )
+        list_filter = (
+            "customer_id",
+            'created_at',
+        )
+        search_fields = (
+            'id',
+            'customer_id',
+            'order_id',
+        )

@@ -30,6 +30,7 @@ class AdminShyfterEmployee(admin.ModelAdmin):
         "id",
         "type",
         "active",
+        "hourly_cost",
         "email",
         "location",
     )

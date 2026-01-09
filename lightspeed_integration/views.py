@@ -13,6 +13,14 @@ from .services import lightspeed_get, summarize_orders_by_date
 from .models import LightspeedOrder, LightspeedProduct, LightspeedProductGroup
 from .serializers import LightspeedOrderSerializer, LightspeedProductSerializer, LightspeedProductGroupSerializer
 import time
+from datetime import date, timedelta
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+
+from .models import LightspeedReceipt
 logger = logging.getLogger(__name__)
 
 
@@ -600,7 +608,7 @@ class FinanceReceiptActualView(APIView):
 
             url = "financial/receipt/"
 
-            params_current = {"from": from_date_str, "to": to_date_str, "offset": "50"}
+            params_current = {"from": from_date_str, "to": to_date_str, "offset": "100","amount":"100"}
             data_current = lightspeed_get(url, params_current)
             current_results = (
                 data_current.get("results", data_current)
@@ -609,16 +617,16 @@ class FinanceReceiptActualView(APIView):
             )
             # summary_current = summarize_orders_by_date(current_results, from_date_str, to_date_str)
 
-            prev_from_date = _shift_date_by_year(from_date_obj, -1)
-            prev_to_date = _shift_date_by_year(to_date_obj, -1)
-            prev_from_str = prev_from_date.strftime("%Y-%m-%d")
-            prev_to_str = prev_to_date.strftime("%Y-%m-%d")
+            # prev_from_date = _shift_date_by_year(from_date_obj, -1)
+            # prev_to_date = _shift_date_by_year(to_date_obj, -1)
+            # prev_from_str = prev_from_date.strftime("%Y-%m-%d")
+            # prev_to_str = prev_to_date.strftime("%Y-%m-%d")
 
-            params_prev = {"from": prev_from_str, "to": prev_to_str, "offset": "50"}
-            data_prev = lightspeed_get(url, params_prev)
-            prev_results = (
-                data_prev.get("results", data_prev) if isinstance(data_prev, dict) else data_prev
-            )
+            # params_prev = {"from": prev_from_str, "to": prev_to_str, "offset": "50"}
+            # data_prev = lightspeed_get(url, params_prev)
+            # prev_results = (
+            #     data_prev.get("results", data_prev) if isinstance(data_prev, dict) else data_prev
+            # )
             # summary_prev = summarize_orders_by_date(prev_results, prev_from_str, prev_to_str)
 
             response_payload: Dict[str, Any] = {
@@ -627,13 +635,13 @@ class FinanceReceiptActualView(APIView):
                     "to": to_date_str,
                     "summary": current_results,
                 },
-                "last_year_period": {
-                    "from": prev_from_str,
-                    "to": prev_to_str,
-                    "summary": prev_results,
-                },
+                # "last_year_period": {
+                #     "from": prev_from_str,
+                #     "to": prev_to_str,
+                #     "summary": prev_results,
+                # },
             }
-            return Response(response_payload, status=status.HTTP_200_OK)
+            return Response(data_current, status=status.HTTP_200_OK)
 
         except Exception as exc:
             logger.exception("Error fetching financial receipts")
@@ -757,3 +765,194 @@ class InventoryProductGroupView(APIView):
         except Exception as exc:
             logger.exception("Error fetching inventory productgroup details")
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# helper fun.
+def safe_parse_datetime(value):
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        return parse_datetime(value)
+    return None
+
+
+def map_receipt_to_model(receipt, location):
+    return {
+        "uuid": receipt.get("uuid"),
+        "order_id": receipt.get("orderId"),
+
+        "table_id": receipt.get("tableId"),
+        "floor_id": receipt.get("floorId"),
+        "customer_id": receipt.get("customerId"),
+        "customer_uuid": receipt.get("customerUuid"),
+        "user_id": receipt.get("userId"),
+        "parent_id": receipt.get("parentId"),
+
+        "status": receipt.get("status"),
+        "type": receipt.get("type"),
+
+        "creation_date": safe_parse_datetime(receipt.get("creationDate")),
+        "modification_date": safe_parse_datetime(receipt.get("modificationDate")),
+        "delivery_date": safe_parse_datetime(receipt.get("deliveryDate")),
+        "closing_date": safe_parse_datetime(receipt.get("closingDate")),
+        "print_date": safe_parse_datetime(receipt.get("printDate")),
+
+        "total": receipt.get("total"),
+        "total_without_tax": receipt.get("totalWithoutTax"),
+
+        "number_of_customers": receipt.get("numberOfCustomers", 0),
+        "current_course": receipt.get("currentCourse"),
+
+        "items": receipt.get("items", []),
+        "payments": receipt.get("payments", []),
+        "tax_info": receipt.get("taxInfo", []),
+        "action_items": receipt.get("actionItems", []),
+
+        "raw_data": receipt,
+        "location": location,
+    }
+def lightspeed_get_with_backoff(url, params, location, max_retries=5):
+    """
+    Lightspeed API call with exponential backoff for 429 / Cloudflare.
+    """
+    delay = 5  # seconds
+
+    for attempt in range(max_retries):
+        try:
+            return lightspeed_get(url, params, location=location)
+
+        except Exception as exc:
+            msg = str(exc).lower()
+
+            if "429" in msg or "rate limit" in msg or "cloudflare" in msg:
+                logger.warning(
+                    "Rate limited. Sleeping %s sec (attempt %s/%s)",
+                    delay, attempt + 1, max_retries
+                )
+                time.sleep(delay)
+                delay *= 2
+                continue
+
+            raise exc
+
+    raise Exception("Max retries exceeded due to rate limiting")
+
+
+class LightspeedReceiptFullDumpView(APIView):
+    """
+    Dump ALL Lightspeed receipts from 2021-01-01 till today.
+    Uses:
+    - 7 day window
+    - offset + amount pagination
+    - rate limit backoff
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *_, **__):
+        start_time = time.time()
+
+        location = request.query_params.get("location") or "Dendermonde"
+
+        START_DATE = date(2022, 1, 1)
+        END_DATE = date.today()
+
+        WINDOW_DAYS = 7
+        AMOUNT = 100
+
+        url = "financial/receipt/"
+
+        total_fetched = 0
+        total_saved = 0
+        total_skipped = 0
+
+        current_start = START_DATE
+
+        try:
+            while current_start <= END_DATE:
+                current_end = min(
+                    current_start + timedelta(days=WINDOW_DAYS - 1),
+                    END_DATE,
+                )
+
+                offset = 0
+                logger.info(
+                    "Fetching receipts from %s to %s",
+                    current_start, current_end
+                )
+
+                while True:
+                    params = {
+                        "from": current_start.strftime("%Y-%m-%d"),
+                        "to": current_end.strftime("%Y-%m-%d"),
+                        "offset": offset,
+                        "amount": AMOUNT,
+                    }
+
+                    response = lightspeed_get_with_backoff(
+                        url, params, location
+                    )
+
+                    if isinstance(response, dict):
+                        results = response.get("results", [])
+                    else:
+                        results = response
+
+                    if not results:
+                        break
+
+                    total_fetched += len(results)
+
+                    for receipt in results:
+                        receipt_id = receipt.get("id")
+                        if not receipt_id:
+                            total_skipped += 1
+                            continue
+
+                        try:
+                            defaults = map_receipt_to_model(receipt, location)
+
+                            _, created = LightspeedReceipt.objects.update_or_create(
+                                id=receipt_id,
+                                defaults=defaults,
+                            )
+
+                            if created:
+                                total_saved += 1
+
+                        except Exception as e:
+                            logger.error(
+                                "Failed saving receipt %s: %s",
+                                receipt_id, str(e)
+                            )
+                            total_skipped += 1
+
+                    offset += AMOUNT
+
+                    # ✅ IMPORTANT: throttle
+                    time.sleep(1.0)
+
+                current_start = current_end + timedelta(days=1)
+
+            duration = round(time.time() - start_time, 2)
+
+            return Response(
+                {
+                    "status": "completed",
+                    "from_date": START_DATE.isoformat(),
+                    "to_date": END_DATE.isoformat(),
+                    "total_fetched": total_fetched,
+                    "total_saved": total_saved,
+                    "total_skipped": total_skipped,
+                    "time_taken_sec": duration,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as exc:
+            logger.exception("Lightspeed full dump failed")
+            return Response(
+                {"error": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
