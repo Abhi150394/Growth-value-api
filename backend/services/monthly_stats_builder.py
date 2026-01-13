@@ -67,6 +67,42 @@ def normalized_labour_area_row(row,group_by="location"):
         data[group_by]=row.get(group_by,"").lower()
     return data
 
+def normalized_labour_hourly_row(row, group_by="day_name"):
+    data = {
+        # grouping keys
+        "hour_of_day": row.get("hour_of_day"),
+
+        # ACTUAL totals
+        "actual_shift_num_mins": row.get("total_shift_duration", 0),
+        "actual_work_num_mins": row.get("total_work_duration", 0),
+        "actual_base_cost": row.get("total_shift_cost", 0),
+        "actual_fully_loaded_cost": row.get("total_hourly_cost", 0),
+
+        # ACTUAL averages
+        "avg_actual_shift_num_mins": row.get("avg_total_shift_duration", 0),
+        "avg_actual_work_num_mins": row.get("avg_total_work_duration", 0),
+        "avg_actual_base_cost": row.get("avg_total_shift_cost", 0),
+        "avg_actual_fully_loaded_cost": row.get("avg_total_hourly_cost", 0),
+
+        # FORECAST totals
+        "forecast_shift_num_mins": row.get("forecast_total_shift_duration", 0),
+        "forecast_work_num_mins": row.get("forecast_total_work_duration", 0),
+        "forecast_base_cost": row.get("forecast_total_shift_cost", 0),
+        "forecast_fully_loaded_cost": row.get("forecast_total_hourly_cost", 0),
+
+        # FORECAST averages
+        "avg_forecast_shift_num_mins": row.get("avg_forecast_total_shift_duration", 0),
+        "avg_forecast_work_num_mins": row.get("avg_forecast_total_work_duration", 0),
+        "avg_forecast_base_cost": row.get("avg_forecast_total_shift_cost", 0),
+        "avg_forecast_fully_loaded_cost": row.get("avg_forecast_total_hourly_cost", 0),
+    }
+
+    # dynamic grouping (day_name, role, etc.)
+    if group_by:
+        data[group_by] = row.get(group_by).lower()
+
+    return data
+
 def labour_area_build_overall(detail):
     by_day = defaultdict(lambda: {
         "actual_base_cost": 0,
@@ -154,6 +190,168 @@ def labour_area_build_overall(detail):
 
     return output
 
+# def labour_hourly_build_overall_by_day(detail):
+#     """
+#     Aggregates hourly rows into ONE object per day_name (Mon–Sun)
+#     """
+
+#     by_day = defaultdict(lambda: {
+#         # totals
+#         "actual_shift_num_mins": 0,
+#         "actual_work_num_mins": 0,
+#         "actual_base_cost": 0,
+#         "actual_fully_loaded_cost": 0,
+
+#         "forecast_shift_num_mins": 0,
+#         "forecast_work_num_mins": 0,
+#         "forecast_base_cost": 0,
+#         "forecast_fully_loaded_cost": 0,
+
+#         # internal
+#         "_hours": set(),   # track unique hours for avg
+#     })
+
+#     # 🔄 Aggregate all rows
+#     for rows in detail.values():
+#         for r in rows:
+#             day = r["day_name"].lower()
+#             d = by_day[day]
+
+#             hour = r.get("hour_of_day")
+#             if hour is not None:
+#                 d["_hours"].add(hour)
+
+#             d["actual_shift_num_mins"] += r.get("actual_shift_num_mins", 0)
+#             d["actual_work_num_mins"] += r.get("actual_work_num_mins", 0)
+#             d["actual_base_cost"] += r.get("actual_base_cost", 0)
+#             d["actual_fully_loaded_cost"] += r.get("actual_fully_loaded_cost", 0)
+
+#             d["forecast_shift_num_mins"] += r.get("forecast_shift_num_mins", 0)
+#             d["forecast_work_num_mins"] += r.get("forecast_work_num_mins", 0)
+#             d["forecast_base_cost"] += r.get("forecast_base_cost", 0)
+#             d["forecast_fully_loaded_cost"] += r.get("forecast_fully_loaded_cost", 0)
+
+#     # 📤 Final output (one row per day)
+#     output = []
+#     for day_name, d in by_day.items():
+#         hour_count = len(d["_hours"]) or 1  # normally 24
+
+#         output.append({
+#             "day_name": day_name,
+#             "hour_of_day":d["_hours"],
+#             # 🔢 ACTUAL totals
+#             "actual_shift_num_mins": round(d["actual_shift_num_mins"], 2),
+#             "actual_work_num_mins": round(d["actual_work_num_mins"], 2),
+#             "actual_base_cost": round(d["actual_base_cost"], 2),
+#             "actual_fully_loaded_cost": round(d["actual_fully_loaded_cost"], 2),
+
+#             # 📊 ACTUAL averages
+#             "avg_actual_shift_num_mins": round(d["actual_shift_num_mins"] / hour_count, 2),
+#             "avg_actual_work_num_mins": round(d["actual_work_num_mins"] / hour_count, 2),
+#             "avg_actual_base_cost": round(d["actual_base_cost"] / hour_count, 2),
+#             "avg_actual_fully_loaded_cost": round(d["actual_fully_loaded_cost"] / hour_count, 2),
+
+#             # 🔮 FORECAST totals
+#             "forecast_shift_num_mins": round(d["forecast_shift_num_mins"], 2),
+#             "forecast_work_num_mins": round(d["forecast_work_num_mins"], 2),
+#             "forecast_base_cost": round(d["forecast_base_cost"], 2),
+#             "forecast_fully_loaded_cost": round(d["forecast_fully_loaded_cost"], 2),
+
+#             # 📈 FORECAST averages
+#             "avg_forecast_shift_num_mins": round(d["forecast_shift_num_mins"] / hour_count, 2),
+#             "avg_forecast_work_num_mins": round(d["forecast_work_num_mins"] / hour_count, 2),
+#             "avg_forecast_base_cost": round(d["forecast_base_cost"] / hour_count, 2),
+#             "avg_forecast_fully_loaded_cost": round(d["forecast_fully_loaded_cost"] / hour_count, 2),
+#         })
+
+#     # Optional: sort Monday → Sunday
+#     order = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+#     output.sort(key=lambda x: order.index(x["day_name"]) if x["day_name"] in order else 99)
+
+#     return output
+
+
+def labour_hourly_build_overall_by_day(detail):
+    """
+    Aggregates hourly rows into ONE object per hour_of_day (0–23),
+    summing the same hour across all days (Mon–Sun).
+    """
+
+    by_hour = defaultdict(lambda: {
+        # totals
+        "actual_shift_num_mins": 0,
+        "actual_work_num_mins": 0,
+        "actual_base_cost": 0,
+        "actual_fully_loaded_cost": 0,
+
+        "forecast_shift_num_mins": 0,
+        "forecast_work_num_mins": 0,
+        "forecast_base_cost": 0,
+        "forecast_fully_loaded_cost": 0,
+
+        # internal
+        "_days": set(),   # track unique days for avg
+    })
+
+    # 🔄 Aggregate all rows
+    for rows in detail.values():
+        for r in rows:
+            hour = r.get("hour_of_day")
+            if hour is None:
+                continue
+
+            d = by_hour[hour]
+
+            day = r.get("day_name")
+            if day:
+                d["_days"].add(day.lower())
+
+            d["actual_shift_num_mins"] += r.get("actual_shift_num_mins", 0)
+            d["actual_work_num_mins"] += r.get("actual_work_num_mins", 0)
+            d["actual_base_cost"] += r.get("actual_base_cost", 0)
+            d["actual_fully_loaded_cost"] += r.get("actual_fully_loaded_cost", 0)
+
+            d["forecast_shift_num_mins"] += r.get("forecast_shift_num_mins", 0)
+            d["forecast_work_num_mins"] += r.get("forecast_work_num_mins", 0)
+            d["forecast_base_cost"] += r.get("forecast_base_cost", 0)
+            d["forecast_fully_loaded_cost"] += r.get("forecast_fully_loaded_cost", 0)
+
+    # 📤 Final output (exactly 24 rows)
+    output = []
+
+    for hour in range(24):
+        d = by_hour[hour]
+        day_count = len(d["_days"]) or 1   # normally 7
+
+        output.append({
+            "hour_of_day": hour,
+
+            # 🔢 ACTUAL totals
+            "actual_shift_num_mins": round(d["actual_shift_num_mins"], 2),
+            "actual_work_num_mins": round(d["actual_work_num_mins"], 2),
+            "actual_base_cost": round(d["actual_base_cost"], 2),
+            "actual_fully_loaded_cost": round(d["actual_fully_loaded_cost"], 2),
+
+            # 📊 ACTUAL averages (per day)
+            "avg_actual_shift_num_mins": round(d["actual_shift_num_mins"] / day_count, 2),
+            "avg_actual_work_num_mins": round(d["actual_work_num_mins"] / day_count, 2),
+            "avg_actual_base_cost": round(d["actual_base_cost"] / day_count, 2),
+            "avg_actual_fully_loaded_cost": round(d["actual_fully_loaded_cost"] / day_count, 2),
+
+            # 🔮 FORECAST totals
+            "forecast_shift_num_mins": round(d["forecast_shift_num_mins"], 2),
+            "forecast_work_num_mins": round(d["forecast_work_num_mins"], 2),
+            "forecast_base_cost": round(d["forecast_base_cost"], 2),
+            "forecast_fully_loaded_cost": round(d["forecast_fully_loaded_cost"], 2),
+
+            # 📈 FORECAST averages (per day)
+            "avg_forecast_shift_num_mins": round(d["forecast_shift_num_mins"] / day_count, 2),
+            "avg_forecast_work_num_mins": round(d["forecast_work_num_mins"] / day_count, 2),
+            "avg_forecast_base_cost": round(d["forecast_base_cost"] / day_count, 2),
+            "avg_forecast_fully_loaded_cost": round(d["forecast_fully_loaded_cost"] / day_count, 2),
+        })
+
+    return output
 
 def build_overall(detail):
     by_day = defaultdict(lambda: {
@@ -438,6 +636,63 @@ def build_labourArea_stats(raw_data,start_date,end_date):
             "south": detail.get("tipzakske", []),
             "east": detail.get("frietbooster", []),
             "west": detail.get("frietchalet", []),
+        },
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
+    
+def build_labourRole_stats(raw_data,start_date,end_date):
+    detail=defaultdict(list)
+    
+    for row in raw_data:
+        normalized=normalized_labour_area_row(row,"role")
+        detail[normalized["role"]].append(normalized)
+        
+    overall=labour_area_build_overall(detail)
+    
+    return {
+        "overall":overall,
+        "detail":{
+            "all":overall,
+            "hr":detail.get("hr",[]),
+            "admin":detail.get("admin",[]),
+            "employee":detail.get("employee",[])
+        },
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
+    
+def build_labourHour_stats(raw_data,start_date,end_date):
+    detail=defaultdict(list)
+    
+    for row in raw_data:
+        normalized=normalized_labour_hourly_row(row,"day_name")
+        detail[normalized["day_name"]].append(normalized)
+        
+    overall=labour_hourly_build_overall_by_day(detail)
+    return {
+        "overall":overall,
+        "detail":{
+            "all":overall,
+            "monday":detail.get("monday",[]),
+            "tuesday":detail.get("tuesday",[]),
+            "wednesday":detail.get("wednesday",[]),
+            "thursday":detail.get("thursday",[]),
+            "friday":detail.get("friday",[]),
+            "saturday":detail.get("saturday",[]),
+            "sunday":detail.get("sunday",[])
         },
         "compare_period":{
             "from":start_date.replace(year=start_date.year-1).isoformat(),

@@ -10,8 +10,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import logging
 from backend.services.iter_90_day_ranges import iter_90_day_ranges
-from backend.services.monthly_stats_builder import build_labourArea_stats, build_monthly_stats_response, build_orderType_stats_response, build_product_category_stats_reponse, build_product_item_stats_response
-from backend.services.monthly_stats_sql import fetch_labour_area_raw, fetch_monthly_stats_raw, fetch_sales_orderType_raw, fetch_sales_productCategory_raw, fetch_sales_productItem_raw
+from backend.services.monthly_stats_builder import build_labourArea_stats, build_labourHour_stats, build_labourRole_stats, build_monthly_stats_response, build_orderType_stats_response, build_product_category_stats_reponse, build_product_item_stats_response
+from backend.services.monthly_stats_sql import fetch_labour_area_raw, fetch_labour_hour_raw, fetch_labour_role_raw, fetch_monthly_stats_raw, fetch_sales_orderType_raw, fetch_sales_productCategory_raw, fetch_sales_productItem_raw
 from .serializers import (
     ShyfterEmployeeSeriallizer, UserSerializer, UserListSerializer, SearchSerializer, OrderSerializer, WishlistSerializer,
     ProductSerializer, ScraperSerializer, TagSerializer, VendorSerializer
@@ -1533,4 +1533,54 @@ def lightspeed_labour_area(request):
         end_date=end_date_obj
         
     )
+    return Response(response)
+
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_labour_role(request):
+    start_date=request.GET.get("start_date")
+    end_date=request.GET.get("end_date")
+    
+    if not start_date or not end_date:
+        return Response({"error":"start date and end date are required"},status=400)
+     
+    start_date_obj=datetime.strptime(start_date,"%Y-%m-%d").date()
+    end_date_obj=datetime.strptime(end_date,"%Y-%m-%d")
+    
+    raw_data=fetch_labour_role_raw(
+        start_date=start_date_obj,
+        end_date=end_date_obj,
+    )
+    
+    response=build_labourRole_stats(
+        raw_data=raw_data,
+        start_date=start_date_obj,
+        end_date=end_date_obj,
+    )
+    
+    return Response(response)
+
+@api_view(["GET"])
+@permission_classes([IsAdminRole])
+def lightspeed_labour_hour(request):
+    start_date=request.GET.get("start_date")
+    end_date=request.GET.get("end_date")
+    
+    if not start_date or not end_date:
+        return Response({"error":"start date and end date are required"},status=400)
+     
+    start_date_obj=datetime.strptime(start_date,"%Y-%m-%d").date()
+    end_date_obj=datetime.strptime(end_date,"%Y-%m-%d")
+    
+    raw_data=fetch_labour_hour_raw(
+        start_date=start_date_obj,
+        end_date=end_date_obj,
+    )
+    
+    response=build_labourHour_stats(
+        raw_data=raw_data,
+        start_date=start_date_obj,
+        end_date=end_date_obj,
+    )
+    
     return Response(response)

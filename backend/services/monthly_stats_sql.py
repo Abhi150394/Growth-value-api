@@ -690,3 +690,281 @@ def fetch_labour_area_raw(start_date,end_date):
         cursor.execute(sql,params)
         columns=[col[0] for col in cursor.description]
         return [dict(zip(columns,row)) for row in cursor.fetchall()]
+    
+def fetch_labour_role_raw(start_date,end_date):
+    prev_start=start_date.replace(year=start_date.year-1)
+    prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql="""
+    WITH current_dates AS (
+        SELECT generate_series(
+            %s::date,
+            %s::date,
+            INTERVAL '1 day'
+        )::date AS curr_date
+    ),
+    previous_dates AS (
+        SELECT 
+            curr_date,
+            (curr_date - INTERVAL '1 year')::date AS prev_date
+        FROM current_dates
+    ),
+    cte_current_raw AS (
+        SELECT
+            c.location,
+            c.id,
+            e.type as role,
+            c.work_date::date AS day_date,
+            c.duration_minutes as work_duration,
+            CASE
+				WHEN c.cost=0 then (s.cost*c.duration_minutes)/s.duration_minutes else c.cost
+			END as duration_costing,
+            c.shift_id as shift_id
+        FROM shyfter_employee_clocking c
+		JOIN shyfter_employee_shift s
+		ON c.shift_id = s.id
+		join shyfter_employee e
+		on e.id=s.employee_id
+        where c.work_date >= %s
+          AND c.work_date < %s
+    ),
+    cte_current as (
+    select day_date,role,
+    count(*) as total_current_employee,
+    sum(work_duration) as total_work_duration,
+    sum(duration_costing) as total_duration_costing
+    from cte_current_raw
+    group by role,day_date
+    ),
+    cte_previous_raw AS (
+        SELECT
+            c.location,
+            c.id,
+            e.type as role,
+            c.work_date::date AS day_date,
+            c.duration_minutes as work_duration,
+			CASE
+				WHEN c.cost=0 then (s.cost*c.duration_minutes)/s.duration_minutes else c.cost
+			END as duration_costing,
+            c.shift_id as shift_id
+        FROM shyfter_employee_clocking c
+		JOIN shyfter_employee_shift s
+		ON c.shift_id = s.id
+		join shyfter_employee e
+		on e.id=s.employee_id
+        where c.work_date >= %s
+          AND c.work_date < %s
+    ),
+    cte_previous as (
+    select day_date,role,
+    count(*) as total_previous_employee,
+    sum(work_duration) as total_work_duration,
+    sum(duration_costing) as total_duration_costing
+    from cte_current_raw
+    group by role,day_date
+    ),
+    all_type as (
+    select distinct type from shyfter_employee
+    )
+    select 
+    loc.type as role,
+    to_char(pd.curr_date,'DD/MM/YYYY') as current_day,
+    to_char(pd.prev_date,'DD/MM/YYYY') as previous_day,
+    round(coalesce(c.total_current_employee,0),2) as total_current_employee,
+    round(coalesce(p.total_previous_employee,0),2) as total_previous_employee,
+    round(coalesce(c.total_duration_costing,0),2) as total_current_duration_costing,
+    round(coalesce(p.total_duration_costing,0),2) as total_previous_duration_costing,
+    round(coalesce(c.total_work_duration,0),2) as total_current_work_duration,
+    round(coalesce(p.total_work_duration,0),2) as total_previous_work_duration
+    from previous_dates pd 
+    cross join all_type loc
+    left join cte_current c
+    	on c.role=loc.type
+    	and c.day_date =pd.curr_date
+    left join cte_previous p
+    	on p.role=loc.type
+    	and p.day_date =pd.prev_date
+    order by loc.type,pd.curr_date 
+    
+    """
+    
+    params=[
+        start_date,
+        end_date,
+        start_date,
+        end_date+timedelta(days=1),
+        prev_start,
+        prev_end+timedelta(days=1)
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql,params)
+        columns=[col[0] for col in cursor.description]
+        return [dict(zip(columns,row)) for row in cursor.fetchall()]
+    
+def fetch_labour_hour_raw(start_date,end_date):
+    # prev_start=start_date.replace(year=start_date.year-1)
+    # prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql="""
+    WITH date_series AS (
+    SELECT generate_series(
+        %s::date,
+        %s::date,
+        INTERVAL '1 day'
+    )::date AS day_date
+    ),
+    hour_series AS (
+        SELECT generate_series(0, 23) AS hour_of_day
+    ),
+    calendar AS (
+        SELECT
+            d.day_date,
+            to_char(d.day_date, 'FMDay') AS day_name,
+            h.hour_of_day,
+            (d.day_date + make_interval(hours => h.hour_of_day)) AS hour_start,
+            (d.day_date + make_interval(hours => h.hour_of_day + 1)) AS hour_end
+        FROM date_series d
+        CROSS JOIN hour_series h
+    ),
+    calendar_prev AS (
+        SELECT
+            (d.day_date - INTERVAL '1 year')::date AS day_date,
+            to_char(d.day_date - INTERVAL '1 year', 'FMDay') AS day_name,
+            h.hour_of_day,
+            ((d.day_date - INTERVAL '1 year') + make_interval(hours => h.hour_of_day)) AS hour_start,
+            ((d.day_date - INTERVAL '1 year') + make_interval(hours => h.hour_of_day + 1)) AS hour_end
+        FROM date_series d
+        CROSS JOIN hour_series h
+    ),
+    cte_hourly AS (
+        SELECT
+            cal.day_name,
+            cal.hour_of_day,
+            cal.day_date,
+            to_char(cal.hour_start, 'HH24:MI') AS hour_label,
+            c.location,
+            c.id AS clocking_id,
+            c.employee_id,
+            c.shift_id,
+            s.duration_minutes AS shift_duration,
+            c.duration_minutes AS work_duration,
+            CASE
+                WHEN c.cost = 0
+                THEN (s.cost * c.duration_minutes) / NULLIF(s.duration_minutes, 0)
+                ELSE c.cost
+            END AS shift_cost,
+            (
+                CASE
+                    WHEN c.cost = 0
+                    THEN (s.cost * c.duration_minutes) / NULLIF(s.duration_minutes, 0)
+                    ELSE c.cost
+                END
+            ) / NULLIF(c.duration_minutes / 60.0, 0) AS hourly_cost
+        FROM calendar cal
+        LEFT JOIN shyfter_employee_clocking c
+            ON c.work_date = cal.day_date
+        AND cal.hour_start < c.end
+        AND cal.hour_end   > c.start
+        LEFT JOIN shyfter_employee_shift s
+            ON s.id = c.shift_id
+        AND s.employee_id = c.employee_id
+    ),
+    cte_hourly_prev AS (
+        SELECT
+            cal.day_name,
+            cal.hour_of_day,
+            cal.day_date,
+            to_char(cal.hour_start, 'HH24:MI') AS hour_label,
+            c.location,
+            c.id AS clocking_id,
+            c.employee_id,
+            c.shift_id,
+            s.duration_minutes AS shift_duration,
+            c.duration_minutes AS work_duration,
+            CASE
+                WHEN c.cost = 0
+                THEN (s.cost * c.duration_minutes) / NULLIF(s.duration_minutes, 0)
+                ELSE c.cost
+            END AS shift_cost,
+            (
+                CASE
+                    WHEN c.cost = 0
+                    THEN (s.cost * c.duration_minutes) / NULLIF(s.duration_minutes, 0)
+                    ELSE c.cost
+                END
+            ) / NULLIF(c.duration_minutes / 60.0, 0) AS hourly_cost
+        FROM calendar_prev cal
+        LEFT JOIN shyfter_employee_clocking c
+            ON c.work_date = cal.day_date
+        AND cal.hour_start < c.end
+        AND cal.hour_end   > c.start
+        LEFT JOIN shyfter_employee_shift s
+            ON s.id = c.shift_id
+        AND s.employee_id = c.employee_id
+    ),
+    final_cte as (
+    SELECT 
+    cur.day_name,
+        cur.hour_of_day,
+        --day_date,
+        --MIN(day_date) AS sample_day_date,                                                                                                                                                                                                                                                                                                                                                                    
+        coalesce(sum(cur.shift_duration),0) as total_shift_duration,
+        coalesce(sum(cur.work_duration),0) as total_work_duration,
+        coalesce(sum(cur.shift_cost),0) as total_shift_cost,
+        coalesce(sum(cur.hourly_cost),0) as total_hourly_cost,
+        coalesce(avg(cur.shift_duration),0) as avg_total_shift_duration,
+        coalesce(avg(cur.work_duration),0) as avg_total_work_duration,
+        coalesce(avg(cur.shift_cost),0) as avg_total_shift_cost,
+        coalesce(avg(cur.hourly_cost),0) as avg_total_hourly__forecastcavg,
+        coalesce(avg(prev.shift_duration),0) as forecast_total_shift_duration,
+        coalesce(avg(prev.work_duration),0) as forecast_total_work_duration,
+        coalesce(avg(prev.shift_cost),0) as forecast_total_shift_cost,
+        coalesce(avg(prev.hourly_cost),0) as forecast_total_hourly_cast
+    FROM cte_hourly cur
+    LEFT JOIN cte_hourly_prev prev
+    ON cur.day_name   = prev.day_name
+    AND cur.hour_of_day = prev.hour_of_day
+    group by cur.hour_of_day,cur.day_name
+    ORDER BY cur.day_name,cur.hour_of_day
+    )
+    select 
+        day_name,
+        hour_of_day,
+        --day_date,
+        --MIN(day_date) AS sample_day_date,                                                                                                                                                                                                                                                                                                                                                                    
+        MAX(total_shift_duration) as total_shift_duration,
+        MAX(total_work_duration) as total_work_duration,
+        MAx(total_shift_cost) as total_shift_cost,
+        MAX(total_hourly_cost) as total_hourly_cost,
+        MAX(avg_total_shift_duration) as avg_total_shift_duration,
+        MAX(avg_total_work_duration) as avg_total_work_duration,
+        MAX(avg_total_shift_cost) as avg_total_shift_cost,
+        MAX(avg_total_hourly__forecastcavg) as avg_total_hourly__forecastcavg,
+        MAX(forecast_total_shift_duration) as forecast_total_shift_duration,
+        MAX(forecast_total_work_duration) as forecast_total_work_duration,
+        MAX(forecast_total_shift_cost) as forecast_total_shift_cost,
+        MAX(forecast_total_hourly_cast) as forecast_total_hourly_cast,
+        coalesce(avg(forecast_total_shift_duration),0) as avg_forecast_total_shift_duration,
+        coalesce(avg(forecast_total_work_duration),0) as avg_forecast_total_work_duration,
+        coalesce(avg(forecast_total_shift_cost),0) as avg_forecast_total_shift_cost,
+        coalesce(avg(forecast_total_hourly_cast),0) as avg_forecast_total_hourly_cast
+    FROM final_cte final
+    group by hour_of_day,day_name
+    ORDER BY day_name,hour_of_day
+
+    """
+    
+    params=[
+        start_date,
+        end_date,
+        # start_date,
+        # end_date+timedelta(days=1),
+        # prev_start,
+        # prev_end+timedelta(days=1)
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        columns = [col[0] for col in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
