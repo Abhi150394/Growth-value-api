@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime,date
 
 def normalize_row(row, group_by="location"):
     data = {
@@ -682,6 +682,373 @@ def build_labourHour_stats(raw_data,start_date,end_date):
         detail[normalized["day_name"]].append(normalized)
         
     overall=labour_hourly_build_overall_by_day(detail)
+    return {
+        "overall":overall,
+        "detail":{
+            "all":overall,
+            "monday":detail.get("monday",[]),
+            "tuesday":detail.get("tuesday",[]),
+            "wednesday":detail.get("wednesday",[]),
+            "thursday":detail.get("thursday",[]),
+            "friday":detail.get("friday",[]),
+            "saturday":detail.get("saturday",[]),
+            "sunday":detail.get("sunday",[])
+        },
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
+def to_iso_date(value):
+    if isinstance(value, date):
+        return value.isoformat()
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    if isinstance(value, str):
+        return datetime.strptime(value, "%Y-%m-%d").date().isoformat()
+    raise TypeError(f"Unsupported date type: {type(value)}")
+
+def normalize_dayOfWeek_stats_row(row, group_by="location"):
+    data = {
+        # 📅 Periods
+        "period": to_iso_date(row["current_day"]),
+        "period_ly": to_iso_date(row["previous_day"]),
+
+        # 💰 Sales
+        "total": row.get("totalpayment_current", 0) or 0,
+        "total_ly": row.get("totalpayment_previous", 0) or 0,
+
+        # 🧾 Orders
+        "count": row.get("totalorder_current", 0) or 0,
+        "count_ly": row.get("totalorder_previous", 0) or 0,
+
+        # 👥 Guests
+        "guest_count": row.get("totalcustomer_current", 0) or 0,
+        "guest_count_ly": row.get("totalcustomer_previous", 0) or 0,
+
+        "guest_total": (
+            (row.get("totalcustomer_current", 0) or 0)
+            + (row.get("total_guest_count_current", 0) or 0)
+        ),
+        "guest_total_ly": (
+            (row.get("totalcustomer_previous", 0) or 0)
+            + (row.get("total_guest_count_previous", 0) or 0)
+        ),
+
+        # 🚚 Delivery
+        "time_to_serve": row.get("avgdelivery_minutes_current", 0) or 0,
+        "time_to_serve_ly": row.get("avgdelivery_minutes_previous", 0) or 0,
+
+        # 🚫 Voids (future-ready)
+        "void_count": 0,
+        "void_count_ly": 0,
+        "void_total": 0,
+        "void_total_ly": 0,
+
+        # 🎯 Budget (future-ready)
+        "budget": 0,
+        "budget_ly": 0,
+    }
+
+    # 🔑 Dynamic grouping
+    if group_by:
+        value = row.get(group_by)
+        if isinstance(value, str):
+            value = value.lower()
+        data[group_by] = value
+
+    return data
+
+def build_operation_dayOfWeek_overall(detail):
+    """
+    detail: dict[str, list[normalized_row]]
+    example:
+    {
+        "aalst": [ {...}, {...} ],
+        "brussels": [ {...} ]
+    }
+    """
+
+    by_day = defaultdict(lambda: {
+        "total": 0,
+        "total_ly": 0,
+        "count": 0,
+        "count_ly": 0,
+        "guest_count": 0,
+        "guest_count_ly": 0,
+        "guest_total": 0,
+        "guest_total_ly": 0,
+        "ts_sum": 0,       # weighted sum
+        "ts_ly_sum": 0,    # weighted sum LY
+    })
+
+    # 🔁 Aggregate
+    for rows in detail.values():
+        for r in rows:
+            d = by_day[r["period"]]
+
+            d["total"] += r["total"]
+            d["total_ly"] += r["total_ly"]
+
+            d["count"] += r["count"]
+            d["count_ly"] += r["count_ly"]
+
+            d["guest_count"] += r["guest_count"]
+            d["guest_count_ly"] += r["guest_count_ly"]
+
+            d["guest_total"] += r["guest_total"]
+            d["guest_total_ly"] += r["guest_total_ly"]
+
+            # ⚖️ weighted avg handling
+            d["ts_sum"] += r["time_to_serve"] * r["count"]
+            d["ts_ly_sum"] += r["time_to_serve_ly"] * r["count_ly"]
+
+    # 📤 Final output
+    output = []
+
+    for day, d in sorted(by_day.items()):
+        day_dt = datetime.fromisoformat(day)
+
+        output.append({
+            "period": day,
+            "period_ly": day_dt.replace(year=day_dt.year - 1).date().isoformat(),
+
+            "total": round(d["total"], 3),
+            "total_ly": round(d["total_ly"], 3),
+
+            "count": d["count"],
+            "count_ly": d["count_ly"],
+
+            "guest_count": d["guest_count"],
+            "guest_count_ly": d["guest_count_ly"],
+
+            "time_to_serve": (
+                round(d["ts_sum"] / d["count"], 2) if d["count"] else 0
+            ),
+            "time_to_serve_ly": (
+                round(d["ts_ly_sum"] / d["count_ly"], 2) if d["count_ly"] else 0
+            ),
+
+            "void_count": 0,
+            "void_count_ly": 0,
+            "void_total": 0,
+            "void_total_ly": 0,
+
+            "guest_total": round(d["guest_total"], 3),
+            "guest_total_ly": round(d["guest_total_ly"], 3),
+
+            "budget": 0,
+            "budget_ly": 0,
+        })
+
+    return output
+
+def build_operation_dayOfWeek_stats(raw_data,start_date,end_date):
+    
+    detail=defaultdict(list)
+    
+    for row in raw_data:
+        normalized=normalize_dayOfWeek_stats_row(row,"day_name")
+        detail[normalized["day_name"]].append(normalized)
+        
+    overall=build_operation_dayOfWeek_overall(detail)
+    
+    return {
+        "overall":overall,
+        "detail":{
+            "all":overall,
+            "monday":detail.get("monday",[]),
+            "tuesday":detail.get("tuesday",[]),
+            "wednesday":detail.get("wednesday",[]),
+            "thursday":detail.get("thursday",[]),
+            "friday":detail.get("friday",[]),
+            "saturday":detail.get("saturday",[]),
+            "sunday":detail.get("sunday",[])
+        },
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
+  
+def normalized_operation_hourly_row(row, group_by="day_name"):
+    data = {
+        # ⏱️ grouping key
+        "hour_of_day": row.get("hour_of_day"),
+        "hour_label": row.get("hour_label"),
+
+        # 💰 Revenue
+        "total": row.get("totalpayment_current", 0),
+        "total_ly": row.get("totalpayment_previous", 0),
+
+        # 🧾 Orders
+        "count": row.get("totalorder_current", 0),
+        "count_ly": row.get("totalorder_previous", 0),
+
+        # 👥 Customers
+        "guest_count": row.get("totalcustomer_current", 0),
+        "guest_count_ly": row.get("totalcustomer_previous", 0),
+
+        # ⏱️ Delivery time
+        "time_to_serve": row.get("avgdelivery_minutes_current", 0),
+        "time_to_serve_ly": row.get("avgdelivery_minutes_previous", 0),
+
+        # ❌ Voids (not available at hourly level)
+        "void_count": 0,
+        "void_count_ly": 0,
+        "void_total": 0,
+        "void_total_ly": 0,
+
+        # 👤 Guest totals (customer + guest count)
+        "guest_total": (
+            row.get("totalcustomer_current", 0)
+            + row.get("total_guest_count_current", 0)
+        ),
+        "guest_total_ly": (
+            row.get("totalcustomer_previous", 0)
+            + row.get("total_guest_count_previous", 0)
+        ),
+
+        # 🎯 Budget (not applicable here)
+        "budget": 0,
+        "budget_ly": 0
+    }
+
+    # 🔁 dynamic grouping (day_name, location, etc.)
+    if group_by:
+        value = row.get(group_by)
+        data[group_by] = value.lower() if isinstance(value, str) else value
+
+    return data
+  
+def operations_hourly_build_overall_by_day(detail):
+    """
+    Aggregates hourly rows into ONE object per hour_of_day (0–23),
+    summing the same hour across all days.
+    Output shape matches sales-style normalize_row.
+    """
+
+    by_hour = defaultdict(lambda: {
+        "total": 0,
+        "total_ly": 0,
+
+        "count": 0,
+        "count_ly": 0,
+
+        "guest_count": 0,
+        "guest_count_ly": 0,
+
+        "time_to_serve": 0,
+        "time_to_serve_ly": 0,
+
+        "guest_total": 0,
+        "guest_total_ly": 0,
+
+        # internal
+        "_rows": 0,
+        "_rows_ly": 0,
+        "_days": set(),
+        "hour_label": None,
+    })
+
+    # 🔄 Aggregate rows
+    for rows in detail.values():
+        for r in rows:
+            hour = r.get("hour_of_day")
+            if hour is None:
+                continue
+
+            d = by_hour[hour]
+
+            d["hour_label"] = r.get("hour_label") or d["hour_label"]
+
+            day = r.get("day_name")
+            if day:
+                d["_days"].add(day.lower())
+
+            d["total"] += r.get("total", 0)
+            d["total_ly"] += r.get("total_ly", 0)
+
+            d["count"] += r.get("count", 0)
+            d["count_ly"] += r.get("count_ly", 0)
+
+            d["guest_count"] += r.get("guest_count", 0)
+            d["guest_count_ly"] += r.get("guest_count_ly", 0)
+
+            d["guest_total"] += r.get("guest_total", 0)
+            d["guest_total_ly"] += r.get("guest_total_ly", 0)
+
+            # avg fields → weighted later
+            if r.get("time_to_serve"):
+                d["time_to_serve"] += r["time_to_serve"]
+                d["_rows"] += 1
+
+            if r.get("time_to_serve_ly"):
+                d["time_to_serve_ly"] += r["time_to_serve_ly"]
+                d["_rows_ly"] += 1
+
+    # 📤 Final output (24 rows)
+    output = []
+
+    for hour in range(24):
+        d = by_hour[hour]
+
+        output.append({
+            "hour_of_day": hour,
+            "hour_label": d["hour_label"] or f"{hour:02d}:00",
+
+            "total": round(d["total"], 2),
+            "total_ly": round(d["total_ly"], 2),
+
+            "count": d["count"],
+            "count_ly": d["count_ly"],
+
+            "guest_count": d["guest_count"],
+            "guest_count_ly": d["guest_count_ly"],
+
+            "time_to_serve": round(
+                d["time_to_serve"] / d["_rows"], 2
+            ) if d["_rows"] else 0,
+
+            "time_to_serve_ly": round(
+                d["time_to_serve_ly"] / d["_rows_ly"], 2
+            ) if d["_rows_ly"] else 0,
+
+            "void_count": 0,
+            "void_count_ly": 0,
+            "void_total": 0,
+            "void_total_ly": 0,
+
+            "guest_total": d["guest_total"],
+            "guest_total_ly": d["guest_total_ly"],
+
+            "budget": 0,
+            "budget_ly": 0,
+
+            # if multiple days exist, frontend can decide how to show
+            "day_name": (
+                next(iter(d["_days"])) if len(d["_days"]) == 1 else "all"
+            ),
+        })
+
+    return output
+def build_operation_hour_stats(raw_data,start_date,end_date):
+    detail=defaultdict(list)
+    
+    for row in raw_data:
+        normalized=normalized_operation_hourly_row(row,"day_name")
+        detail[normalized["day_name"]].append(normalized)
+        
+    overall=operations_hourly_build_overall_by_day(detail)
+    
     return {
         "overall":overall,
         "detail":{

@@ -968,3 +968,307 @@ def fetch_labour_hour_raw(start_date,end_date):
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
+    
+def fetch_operation_dayOfWeek_raw(start_date,end_date):
+    prev_start=start_date.replace(year=start_date.year-1)
+    prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql="""
+    WITH current_dates AS (
+    SELECT generate_series(
+        %s::date,
+        %s::date,
+        INTERVAL '1 day'
+    )::date AS curr_date
+    ),
+    previous_dates AS (
+        SELECT
+            curr_date,
+            (curr_date - INTERVAL '1 year')::date AS prev_date
+        FROM current_dates
+    ),
+    cte_current_raw AS (
+        SELECT
+            o.id AS order_id,
+            o.location,
+            o.creation_date::date AS day_date,
+            TO_CHAR(o.creation_date::date, 'FMDay') AS day_name,
+            /* 💰 payment per order */
+            SUM((p.elem->>'amount')::numeric) AS payment_amount,
+            /* 👥 guest count per order (MAX from order_items) */
+            MAX((t.elem->>'amount')::numeric) AS guest_count,
+            /* ⏱️ delivery minutes per order */
+            CASE
+                WHEN o.delivery_date IS NOT NULL
+                THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
+            END AS delivery_minutes,
+            o.customer_id
+        FROM lightspeed_orders o
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_payments) p(elem)
+            ON TRUE
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_items) t(elem)
+            ON TRUE
+        WHERE o.creation_date >= %s
+        AND o.creation_date <  %s
+        GROUP BY
+            o.id,
+            o.location,
+            o.creation_date,
+            o.delivery_date,
+            o.customer_id
+    ),
+    cte_current AS (
+        SELECT
+            location,
+            day_date,
+            day_name,
+            COUNT(order_id)             AS total_current,
+            COUNT(DISTINCT customer_id) AS total_customer_current,
+            SUM(payment_amount)         AS total_payment_current,
+            
+            SUM(guest_count)            AS total_guest_count_current,
+            AVG(delivery_minutes)       AS avg_delivery_minutes_current
+        FROM cte_current_raw
+        GROUP BY location, day_date, day_name
+    ),
+    cte_previous_raw AS (
+        SELECT
+            o.id AS order_id,
+            o.location,
+            o.creation_date::date AS day_date,
+            TO_CHAR(o.creation_date::date, 'FMDay') AS day_name,
+            SUM((p.elem->>'amount')::numeric) AS payment_amount,
+            MAX((t.elem->>'amount')::numeric) AS guest_count,
+            CASE
+                WHEN o.delivery_date IS NOT NULL
+                THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
+            END AS delivery_minutes,
+            o.customer_id
+        FROM lightspeed_orders o
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_payments) p(elem)
+            ON TRUE
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_items) t(elem)
+            ON TRUE
+        WHERE o.creation_date >= %s
+        AND o.creation_date <  %s
+        GROUP BY
+            o.id,
+            o.location,
+            o.creation_date,
+            o.delivery_date,
+            o.customer_id
+    ),
+    cte_previous AS (
+        SELECT
+            location,
+            day_date,
+            day_name,
+
+            COUNT(order_id)             AS total_previous,
+            COUNT(DISTINCT customer_id) AS total_customer_previous,
+
+            SUM(payment_amount)         AS total_payment_previous,
+            SUM(guest_count)            AS total_guest_count_previous,
+
+            AVG(delivery_minutes)       AS avg_delivery_minutes_previous
+        FROM cte_previous_raw
+        GROUP BY location, day_date, day_name
+    ),
+    all_locations AS (
+        SELECT DISTINCT location
+        FROM lightspeed_orders
+        WHERE creation_date >= %s
+        AND creation_date <  %s
+    )
+    SELECT
+        loc.location,
+        pd.curr_date AS current_day,
+        pd.prev_date AS previous_day,
+        TO_CHAR(pd.curr_date, 'FMDay') AS day_name,
+        COALESCE(c.total_current, 0)           AS totalOrder_current,
+        COALESCE(p.total_previous, 0)          AS totalOrder_previous,
+        COALESCE(c.total_customer_current, 0)  AS totalCustomer_current,
+        COALESCE(p.total_customer_previous, 0) AS totalCustomer_previous,
+        
+        COALESCE(c.total_guest_count_current, 0)  AS total_guest_count_current,
+        COALESCE(p.total_guest_count_previous, 0) AS total_guest_count_previous,
+        ROUND(COALESCE(c.total_payment_current, 0), 2)
+            AS totalPayment_current,
+        ROUND(COALESCE(p.total_payment_previous, 0), 2)
+            AS totalPayment_previous,
+        ROUND(COALESCE(c.avg_delivery_minutes_current, 0), 2)
+            AS avgDelivery_minutes_current,
+        ROUND(COALESCE(p.avg_delivery_minutes_previous, 0), 2)
+            AS avgDelivery_minutes_previous
+    FROM previous_dates pd
+    CROSS JOIN all_locations loc
+    LEFT JOIN cte_current c
+        ON c.location = loc.location
+    AND c.day_date = pd.curr_date
+    LEFT JOIN cte_previous p
+        ON p.location = loc.location
+    AND p.day_date = pd.prev_date
+    ORDER BY pd.curr_date;
+    """
+    params=[
+        start_date,
+        end_date,
+        start_date,
+        end_date+timedelta(days=1),
+        prev_start,
+        prev_end+timedelta(days=1),
+        prev_start,
+        end_date+timedelta(days=1),
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        columns = [col[0] for col in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
+    
+def fetch_operations_hour_raw(start_date,end_date):
+    
+    prev_start=start_date.replace(year=start_date.year-1)
+    prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql="""
+    WITH date_series AS (
+    SELECT generate_series(
+        %s::date,
+        %s::date,
+        INTERVAL '1 day'
+    )::date AS day_date
+    ),
+    hour_series AS (
+        SELECT generate_series(0, 23) AS hour_of_day
+    ),
+
+    -- 🔹 Current year calendar
+    calendar AS (
+        SELECT
+            d.day_date,
+            to_char(d.day_date, 'FMDay') AS day_name,
+            h.hour_of_day,
+            d.day_date + make_interval(hours => h.hour_of_day)     AS hour_start,
+            d.day_date + make_interval(hours => h.hour_of_day + 1) AS hour_end
+        FROM date_series d
+        CROSS JOIN hour_series h
+    ),
+
+    -- 🔹 Previous year calendar
+    calendar_prev AS (
+        SELECT
+            (d.day_date - INTERVAL '1 year')::date AS day_date,
+            to_char(d.day_date - INTERVAL '1 year', 'FMDay') AS day_name,
+            h.hour_of_day,
+            (d.day_date - INTERVAL '1 year') + make_interval(hours => h.hour_of_day)     AS hour_start,
+            (d.day_date - INTERVAL '1 year') + make_interval(hours => h.hour_of_day + 1) AS hour_end
+        FROM date_series d
+        CROSS JOIN hour_series h
+    ),
+
+    -- 🔹 Current year hourly orders
+    cte_current_hourly AS (
+        SELECT
+            cal.day_date,
+            cal.day_name,
+            cal.hour_of_day,
+            o.location,
+            o.id AS order_id,
+            o.customer_id,
+            SUM((p.elem->>'amount')::numeric) AS payment_amount,
+            MAX((i.elem->>'amount')::numeric) AS guest_count,
+            CASE
+                WHEN o.delivery_date IS NOT NULL
+                THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
+            END AS delivery_minutes
+        FROM calendar cal
+        LEFT JOIN lightspeed_orders o
+            ON o.creation_date >= cal.hour_start
+        AND o.creation_date <  cal.hour_end
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_payments) p(elem)
+            ON TRUE
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_items) i(elem)
+            ON TRUE
+        GROUP BY
+            cal.day_date, cal.day_name, cal.hour_of_day,
+            o.location, o.id, o.customer_id, o.delivery_date
+    ),
+
+    -- 🔹 Previous year hourly orders
+    cte_previous_hourly AS (
+        SELECT
+            cal.day_date,
+            cal.day_name,
+            cal.hour_of_day,
+            o.location,
+            o.id AS order_id,
+            o.customer_id,
+            SUM((p.elem->>'amount')::numeric) AS payment_amount,
+            MAX((i.elem->>'amount')::numeric) AS guest_count,
+            CASE
+                WHEN o.delivery_date IS NOT NULL
+                THEN EXTRACT(EPOCH FROM (o.delivery_date - o.creation_date)) / 60
+            END AS delivery_minutes
+        FROM calendar_prev cal
+        LEFT JOIN lightspeed_orders o
+            ON o.creation_date >= cal.hour_start
+        AND o.creation_date <  cal.hour_end
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_payments) p(elem)
+            ON TRUE
+        LEFT JOIN LATERAL jsonb_array_elements(o.order_items) i(elem)
+            ON TRUE
+        GROUP BY
+            cal.day_date, cal.day_name, cal.hour_of_day,
+            o.location, o.id, o.customer_id, o.delivery_date
+    )
+
+    SELECT
+        cur.day_name,
+        cur.hour_of_day,
+        to_char(make_interval(hours => cur.hour_of_day), 'HH24:MI') AS hour_label,
+
+        COUNT(cur.order_id)                         AS totalOrder_current,
+        COUNT(prev.order_id)                        AS totalOrder_previous,
+
+        COUNT(DISTINCT cur.customer_id)             AS totalCustomer_current,
+        COUNT(DISTINCT prev.customer_id)            AS totalCustomer_previous,
+
+        COALESCE(SUM(cur.guest_count), 0)            AS total_guest_count_current,
+        COALESCE(SUM(prev.guest_count), 0)           AS total_guest_count_previous,
+
+        ROUND(COALESCE(SUM(cur.payment_amount), 0), 2) AS totalPayment_current,
+        ROUND(COALESCE(SUM(prev.payment_amount), 0), 2) AS totalPayment_previous,
+
+        ROUND(COALESCE(AVG(cur.delivery_minutes), 0), 2) AS avgDelivery_minutes_current,
+        ROUND(COALESCE(AVG(prev.delivery_minutes), 0), 2) AS avgDelivery_minutes_previous
+
+    FROM cte_current_hourly cur
+    LEFT JOIN cte_previous_hourly prev
+        ON cur.location    = prev.location
+    AND cur.day_name    = prev.day_name
+    AND cur.hour_of_day = prev.hour_of_day
+
+    GROUP BY
+        cur.day_name,
+        cur.hour_of_day
+
+    ORDER BY
+        cur.hour_of_day;
+    """
+
+    params=[
+        start_date,
+        end_date,
+        # start_date,
+        # end_date+timedelta(days=1),
+        # prev_start,
+        # prev_end+timedelta(days=1),
+        # prev_start,
+        # end_date+timedelta(days=1),
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        columns = [col[0] for col in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
