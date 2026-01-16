@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from . import views
-from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location,lightspeed_sales_productItem,lightspeed_product_Items,lightspeed_product_Categories,lightspeed_sales_productCategory,lightspeed_sales_orderType,lightspeed_operation_dayOfWeek,lightspeed_operation_hour
+from .views import MyTokenObtainPairView, MyTokenRefreshView, ShipdayOrdersDetailsView,lightspeed_sales_area,lightspeed_sales_location,lightspeed_sales_productItem,lightspeed_product_Items,lightspeed_product_Categories,lightspeed_sales_productCategory,lightspeed_sales_orderType,lightspeed_operation_dayOfWeek,lightspeed_operation_hour,lightspeed_operation_partOfDay
 from .views import ShipdayOrdersView,XMLUploadView,ShyfterEmployeesView,ShyfterEmployeeClockingsView,ShyfterAllEmployeesClockingsView,ShyfterEmployeeShiftsView,ShyfterAllEmployeesShiftsView,lightspeed_labour_area,lightspeed_labour_role,lightspeed_labour_hour
 
 router = routers.DefaultRouter()
@@ -64,6 +64,7 @@ urlpatterns = [
     path("reports/lightspeed/labour-hour/",lightspeed_labour_hour),
     path("reports/lightspeed/operation-dayOfWeek/",lightspeed_operation_dayOfWeek),
     path("reports/lightspeed/operation-hour/",lightspeed_operation_hour),
+    path("reports/lightspeed/operation-partOfDay/",lightspeed_operation_partOfDay),
     
     #lookup items for filter
     path("lightspeed/productItems/",lightspeed_product_Items),

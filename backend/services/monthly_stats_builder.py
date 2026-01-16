@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime,date
+from datetime import datetime,date,timedelta
 
 def normalize_row(row, group_by="location"):
     data = {
@@ -879,11 +879,11 @@ def build_operation_dayOfWeek_stats(raw_data,start_date,end_date):
         }
     }
   
-def normalized_operation_hourly_row(row, group_by="day_name"):
+def normalized_operation_hourly_row(row, group_by="day_name",period=""):
     data = {
-        # ⏱️ grouping key
-        "hour_of_day": row.get("hour_of_day"),
-        "hour_label": row.get("hour_label"),
+        # # ⏱️ grouping key
+        # "hour_of_day": row.get("hour_of_day"),
+        # "hour_label": row.get("hour_label"),
 
         # 💰 Revenue
         "total": row.get("totalpayment_current", 0),
@@ -921,6 +921,12 @@ def normalized_operation_hourly_row(row, group_by="day_name"):
         "budget": 0,
         "budget_ly": 0
     }
+    if period=="period":
+        data["period"]= datetime.strptime(row["current_day"], "%d/%m/%Y").date().isoformat()
+        data["period_ly"]= datetime.strptime(row["previous_day"], "%d/%m/%Y").date().isoformat()
+    else:
+        data["hour_of_day"]= row.get("hour_of_day")
+        data["hour_label"]= row.get("hour_label")
 
     # 🔁 dynamic grouping (day_name, location, etc.)
     if group_by:
@@ -965,7 +971,10 @@ def operations_hourly_build_overall_by_day(detail):
             hour = r.get("hour_of_day")
             if hour is None:
                 continue
-
+            try:
+                hour = int(hour)
+            except (ValueError, TypeError):
+                continue
             d = by_hour[hour]
 
             d["hour_label"] = r.get("hour_label") or d["hour_label"]
@@ -987,11 +996,11 @@ def operations_hourly_build_overall_by_day(detail):
             d["guest_total_ly"] += r.get("guest_total_ly", 0)
 
             # avg fields → weighted later
-            if r.get("time_to_serve"):
+            if r.get("time_to_serve") is not None:
                 d["time_to_serve"] += r["time_to_serve"]
                 d["_rows"] += 1
 
-            if r.get("time_to_serve_ly"):
+            if r.get("time_to_serve_ly") is not None:
                 d["time_to_serve_ly"] += r["time_to_serve_ly"]
                 d["_rows_ly"] += 1
 
@@ -1040,6 +1049,7 @@ def operations_hourly_build_overall_by_day(detail):
         })
 
     return output
+
 def build_operation_hour_stats(raw_data,start_date,end_date):
     detail=defaultdict(list)
     
@@ -1060,6 +1070,187 @@ def build_operation_hour_stats(raw_data,start_date,end_date):
             "friday":detail.get("friday",[]),
             "saturday":detail.get("saturday",[]),
             "sunday":detail.get("sunday",[])
+        },
+        "compare_period":{
+            "from":start_date.replace(year=start_date.year-1).isoformat(),
+            "to":end_date.replace(year=end_date.year-1).isoformat(),
+        },
+        "this_period":{
+            "from":start_date.isoformat(),
+            "to":end_date.isoformat(),
+        }
+    }
+
+def operations_partOfDay_build_overall_by_day(detail):
+    """
+    Aggregates data by date only.
+    Output = ONE row per date (all part_of_day combined).
+    """
+
+    agg = defaultdict(lambda: {
+        "total": 0,
+        "total_ly": 0,
+        "count": 0,
+        "count_ly": 0,
+        "guest_count": 0,
+        "guest_count_ly": 0,
+        "time_to_serve": 0,
+        "time_to_serve_ly": 0,
+        "guest_total": 0,
+        "guest_total_ly": 0,
+        "_rows": 0,
+        "_rows_ly": 0,
+    })
+
+    # 🔄 Aggregate rows
+    for rows in detail.values():
+        for r in rows:
+            period = r.get("period")
+            if not period:
+                continue
+
+            d = agg[period]
+
+            d["total"] += r.get("total", 0)
+            d["total_ly"] += r.get("total_ly", 0)
+
+            d["count"] += r.get("count", 0)
+            d["count_ly"] += r.get("count_ly", 0)
+
+            d["guest_count"] += r.get("guest_count", 0)
+            d["guest_count_ly"] += r.get("guest_count_ly", 0)
+
+            d["guest_total"] += r.get("guest_total", 0)
+            d["guest_total_ly"] += r.get("guest_total_ly", 0)
+
+            if r.get("time_to_serve") is not None:
+                d["time_to_serve"] += r["time_to_serve"]
+                d["_rows"] += 1
+
+            if r.get("time_to_serve_ly") is not None:
+                d["time_to_serve_ly"] += r["time_to_serve_ly"]
+                d["_rows_ly"] += 1
+
+    # 📤 Final output
+    output = []
+
+    for period, d in sorted(agg.items()):
+        output.append({
+            "total": round(d["total"], 2),
+            "total_ly": round(d["total_ly"], 2),
+
+            "count": float(d["count"]),
+            "count_ly": float(d["count_ly"]),
+
+            "guest_count": float(d["guest_count"]),
+            "guest_count_ly": float(d["guest_count_ly"]),
+
+            "time_to_serve": round(
+                d["time_to_serve"] / d["_rows"], 2
+            ) if d["_rows"] else 0.0,
+
+            "time_to_serve_ly": round(
+                d["time_to_serve_ly"] / d["_rows_ly"], 2
+            ) if d["_rows_ly"] else 0.0,
+
+            "void_count": 0,
+            "void_count_ly": 0,
+            "void_total": 0,
+            "void_total_ly": 0,
+
+            "guest_total": float(d["guest_total"]),
+            "guest_total_ly": float(d["guest_total_ly"]),
+
+            "budget": 0,
+            "budget_ly": 0,
+
+            "period": period,
+        })
+
+    return output
+
+PARTS_OF_DAY = ["breakfast", "lunch", "dinner", "late_night"]
+
+ZERO_ROW_TEMPLATE = {
+    "total": 0,
+    "total_ly": 0,
+    "count": 0,
+    "count_ly": 0,
+    "guest_count": 0,
+    "guest_count_ly": 0,
+    "time_to_serve": 0,
+    "time_to_serve_ly": 0,
+    "void_count": 0,
+    "void_count_ly": 0,
+    "void_total": 0,
+    "void_total_ly": 0,
+    "guest_total": 0,
+    "guest_total_ly": 0,
+    "budget": 0,
+    "budget_ly": 0,
+}
+
+def normalize_detail_part_of_day(detail, start_date, end_date):
+    """
+    Ensures each part_of_day has rows for ALL dates.
+    Missing dates are filled with zero rows.
+    """
+    if isinstance(start_date, datetime):
+        start_date = start_date.date()
+
+    if isinstance(end_date, datetime):
+        end_date = end_date.date()
+
+    result = {}
+
+    # Pre-index existing data → { part: { period: row } }
+    index = {
+        part: {row["period"]: row for row in detail.get(part, [])}
+        for part in PARTS_OF_DAY
+    }
+
+    current = start_date
+    while current <= end_date:
+        period = current.isoformat()
+
+        for part in PARTS_OF_DAY:
+            result.setdefault(part, [])
+
+            if period in index.get(part, {}):
+                result[part].append(index[part][period])
+            else:
+                zero_row = ZERO_ROW_TEMPLATE.copy()
+                zero_row.update({
+                    "period": period,
+                    "part_of_day": part,
+                })
+                result[part].append(zero_row)
+
+        current += timedelta(days=1)
+
+    return result
+
+def build_operations_partOfDay_stats(raw_data,start_date,end_date):
+    detail=defaultdict(list)
+    
+    for row in raw_data:
+        normalized=normalized_operation_hourly_row(row,"part_of_day","period")
+        detail[normalized["part_of_day"]].append(normalized)
+        
+    overall=operations_partOfDay_build_overall_by_day(detail)
+    normalized_detail = normalize_detail_part_of_day(
+        detail,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    return {
+        "overall":overall,
+        "detail":{
+            "all":overall,
+            "breakfast":normalized_detail.get("breakfast",[]),
+            "lunch":normalized_detail.get("lunch",[]),
+            "dinner":normalized_detail.get("dinner",[]),
+            "late_night":normalized_detail.get("late_night",[])
         },
         "compare_period":{
             "from":start_date.replace(year=start_date.year-1).isoformat(),
