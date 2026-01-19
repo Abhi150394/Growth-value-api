@@ -1,9 +1,9 @@
 {
   "Frietchalet": {
-    "refresh_token": "324a947fdc887424097f67fbb2e109fb",
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ0OTgxLCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiNGFkYWUyODItM2VmOC00NzZjLWI1MjAtMWY5YmJiZjQ4NDM5Iiwic3ViIjoiMTYwNzE2Iiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3Njc3ODg4ODMsImV4cCI6MTc2Nzc5MjQ4M30.0L9nk3i83ImVgPSvwRVET1Zfp3cCRuonzqYGLHw6k98",
+    "refresh_token": "a9ada4cf9526de70a238b63d142e7f17",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ0OTgxLCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiNGFkYWUyODItM2VmOC00NzZjLWI1MjAtMWY5YmJiZjQ4NDM5Iiwic3ViIjoiMTYwNzE2Iiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3Njg4MDMyNzMsImV4cCI6MTc2ODgwNjg3M30.LJmoAdPj88Q4K927Ly-Rx1hdG9wNnIXKXrrZTY_2JN8",
     "expires_in": 3600,
-    "timestamp": 1767788883
+    "timestamp": 1768803274
   },
   "Frietbooster": {
     "refresh_token": "ae21ba0b6ac615bdf0c91d7ee3e86cac",
@@ -12,9 +12,9 @@
     "timestamp": 1767787007
   },
   "Tipzakske": {
-    "refresh_token": "f728e1d91fb1d4d7e046180d3f1dd8a4",
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ1OTA1LCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiNzI4MmM3OTQtNWJmZS00ZDI3LTk0NDgtMjE5MTI3YjQyNDAwIiwic3ViIjoiMTk2NDIyIiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3Njc3NzYxNzcsImV4cCI6MTc2Nzc3OTc3N30.5sg1LJxJMH4IyJY4Bneh7mmbQ37Yv_bC4HvKjc1qe0s",
+    "refresh_token": "7b666a8bcb0d36bcc39f557a7a72b21e",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ1OTA1LCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiNzI4MmM3OTQtNWJmZS00ZDI3LTk0NDgtMjE5MTI3YjQyNDAwIiwic3ViIjoiMTk2NDIyIiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3Njg4MDYwMDEsImV4cCI6MTc2ODgwOTYwMX0.7ffsR-kEnWUjNaRtcV1IE7mepYJz-EkOTKKVfa-ZNvs",
     "expires_in": 3600,
-    "timestamp": 1767776177
+    "timestamp": 1768806001
   }
 }
