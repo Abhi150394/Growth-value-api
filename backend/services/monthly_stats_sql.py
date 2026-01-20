@@ -977,7 +977,8 @@ def fetch_labour_hour_raw(start_date,end_date):
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
-    
+  
+#==============================Operations===============================  
 def fetch_operation_dayOfWeek_raw(start_date,end_date):
     prev_start=start_date.replace(year=start_date.year-1)
     prev_end=end_date.replace(year=end_date.year-1)
@@ -1401,6 +1402,30 @@ def fetch_operations_partOfDay_raw(start_date,end_date):
             WHEN 'late_night' THEN 4
         END;
 
+    """
+    
+    params=[
+        start_date,
+        end_date,
+        start_date,
+        end_date+timedelta(days=1),
+        prev_start,
+        prev_end+timedelta(days=1),
+    ]
+    
+    with connection.cursor() as cursor:
+        cursor.execute(sql,params)
+        columns=[col[0] for col in cursor.description]
+        return [dict(zip(columns,row)) for row in cursor.fetchall()]
+    
+#==============================Inventory===============================
+
+def fetch_inventory_location_raw(start_date,end_date):
+    prev_start=start_date.replace(year=start_date.year-1)
+    prev_end=end_date.replace(year=end_date.year-1)
+    
+    sql="""
+    
     """
     
     params=[

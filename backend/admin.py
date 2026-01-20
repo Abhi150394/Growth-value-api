@@ -7,7 +7,14 @@ admin.site.register(Payment)
 admin.site.register(Orders)
 admin.site.register(Searches)
 admin.site.register(Wishlist)
-admin.site.register(Scraper)
+class AdminScraper(admin.ModelAdmin):
+    list_display = (
+        "website",
+        "scraped",
+        "last_scraped",
+    )
+    
+admin.site.register(Scraper,AdminScraper)
 admin.site.register(Tag)
 admin.site.register(Vendor)
 

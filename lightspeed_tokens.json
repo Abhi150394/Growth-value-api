@@ -6,10 +6,10 @@
     "timestamp": 1768803274
   },
   "Frietbooster": {
-    "refresh_token": "ae21ba0b6ac615bdf0c91d7ee3e86cac",
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ0OTgyLCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiODYxZGFkOWEtZjYwNS00ZGM1LTg4ODctM2IyNDc5ZGViOThkIiwic3ViIjoiMTYwNzE4Iiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3Njc3ODcwMDcsImV4cCI6MTc2Nzc5MDYwN30.qN_FeFKJ4XQAGdCjdTDX9xHrRPcvGSSFuWB5TnNDwK0",
+    "refresh_token": "83a84da8441d5bcf934fd153e67bc7c2",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VyYWRtaW4iLCJjaWQiOjQ0OTgyLCJkaWQiOiJhcGkiLCJndHAiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJpc3MiOiJMaWdodHNwZWVkIiwianRpIjoiODYxZGFkOWEtZjYwNS00ZGM1LTg4ODctM2IyNDc5ZGViOThkIiwic3ViIjoiMTYwNzE4Iiwic2VydmVyIjoiZXVjMS5wb3Npb3MuY29tIiwiY2xpZW50X2lkIjoiZjIyZjY5NmZjZWE4OGVkZmE2ZWNhYTYxMmNmZjU1ZDQiLCJpYXQiOjE3Njg4MTY0NzYsImV4cCI6MTc2ODgyMDA3Nn0.-WdjJA0OnNHtf1cLSVv-3OuTUl-zgIfRF-HLYZPKVzY",
     "expires_in": 3600,
-    "timestamp": 1767787007
+    "timestamp": 1768816476
   },
   "Tipzakske": {
     "refresh_token": "7b666a8bcb0d36bcc39f557a7a72b21e",
