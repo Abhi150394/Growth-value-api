@@ -3,7 +3,15 @@ from .models import UserData, Payment, Orders, Searches, Products, Wishlist, Scr
 
 # Register your models here.
 admin.site.register(UserData)
-admin.site.register(Payment)
+
+class AdminPayment(admin.ModelAdmin):
+    list_display=(
+        "package_selected",
+        "user_id",
+        "transaction_amount",
+    )
+    
+admin.site.register(Payment,AdminPayment)
 admin.site.register(Orders)
 admin.site.register(Searches)
 admin.site.register(Wishlist)

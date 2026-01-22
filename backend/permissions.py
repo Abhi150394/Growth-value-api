@@ -56,6 +56,9 @@ class IsVendorRole(BaseRolePermission):
 class IsStandardUserRole(BaseRolePermission):
     allowed_roles = {UserData.Roles.USER}
 
+class IsAnyAuthenticatedUser(BasePermission):
+    def has_permission(self, request, view) -> bool:
+        return request.user and request.user.is_authenticated
 
 class IsOwnerOrAdmin(BasePermission):
     """

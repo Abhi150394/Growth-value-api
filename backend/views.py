@@ -53,7 +53,7 @@ import logging
 import os
 from dotenv import load_dotenv
 
-from backend.permissions import IsAdminRole, IsOwnerOrAdmin, ADMIN_ROLES, BUSINESS_LEADER_ROLES, REGIONAL_MANAGER_ROLES
+from backend.permissions import IsAdminRole, IsOwnerOrAdmin, ADMIN_ROLES, BUSINESS_LEADER_ROLES, REGIONAL_MANAGER_ROLES,IsAnyAuthenticatedUser
 
 load_dotenv()  # loads variables from .env into environment
 
@@ -231,11 +231,10 @@ def checkPayment(user_id):
         user.paid = True
         user.save()
     except Exception as ex:
-        # intenntially make all false true for testing purpose
-        user.paid = False            #False
-        user.payment_status = False  #False
+        user.paid = False
+        user.payment_status = False
         user.save()
-        return {"paid": False, "payment_status": False}       #False
+        return {"paid": False, "payment_status": False}
     
     if status == "active" or status == "trialing" or status == "canceled":
         user.payment_status = True
@@ -1306,7 +1305,7 @@ class XMLUploadView(APIView):
 # ========================================Reports=====================================================================
 # ======================Sales Area =========================
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_sales_area(request):
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
@@ -1334,7 +1333,7 @@ def lightspeed_sales_area(request):
 
 # ======================Sales Order Type =========================
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_sales_orderType(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1360,7 +1359,7 @@ def lightspeed_sales_orderType(request):
 
 # ======================Sales Location =========================
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_sales_location(request):
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
@@ -1388,7 +1387,7 @@ def lightspeed_sales_location(request):
 
 # ======================Sales Product Items =========================
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_sales_productItem(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1415,7 +1414,7 @@ def lightspeed_sales_productItem(request):
     return Response(response)
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_product_Items(request):
     """
     Returns all distinct product names from lightspeed_products table.
@@ -1451,7 +1450,7 @@ def lightspeed_product_Items(request):
         )
  
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_product_Categories(request):
     """
     Returns all distinct product names from lightspeed_products table.
@@ -1488,7 +1487,7 @@ def lightspeed_product_Categories(request):
              
 # ======================Sales Product Category =========================
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_sales_productCategory(request):
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
@@ -1513,7 +1512,7 @@ def lightspeed_sales_productCategory(request):
 
 #====================================Labour=====================
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_labour_area(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1536,7 +1535,7 @@ def lightspeed_labour_area(request):
     return Response(response)
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_labour_role(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1561,7 +1560,7 @@ def lightspeed_labour_role(request):
     return Response(response)
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_labour_hour(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1586,7 +1585,7 @@ def lightspeed_labour_hour(request):
     return Response(response)
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_operation_dayOfWeek(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1609,7 +1608,7 @@ def lightspeed_operation_dayOfWeek(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_operation_hour(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1632,7 +1631,7 @@ def lightspeed_operation_hour(request):
     return Response(response)
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_operation_partOfDay(request):
     start_date=request.GET.get("start_date")
     end_date=request.GET.get("end_date")
@@ -1657,7 +1656,7 @@ def lightspeed_operation_partOfDay(request):
     return Response(response)
 
 @api_view(["GET"])
-@permission_classes([IsAdminRole])
+@permission_classes([IsAnyAuthenticatedUser])
 def lightspeed_inventory_location(request):
     
     start_date=request.GET.get("start_date")
