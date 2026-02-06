@@ -5,6 +5,10 @@ import requests
 from django.conf import settings
 from datetime import datetime, timedelta
 from lightspeed_integration.oauth import LightspeedAuth
+import logging
+from lightspeed_integration.models import LightspeedOrder
+from lightspeed_integration.utils.mappers import _map_location_to_value, _map_order_to_model_fields
+logger = logging.getLogger(__name__)
 
 
 # TOKEN_FILE = "lightspeed_tokens.json"
@@ -152,3 +156,101 @@ def summarize_orders_by_date(orders, from_date, to_date):
             result[date_key]["itemsCount"] += len(order.get("items", []))
 
     return result
+
+
+def fetch_and_store_orders(location, max_orders=500):
+    """
+    Fetch all Lightspeed orders for a location
+    Save to DB (prevent duplicates)
+    Used by API + Cron
+    """
+    start = time.time()
+
+    existing_count = LightspeedOrder.objects.filter(
+        location=_map_location_to_value(location)
+    ).count()
+
+    all_orders = []
+    limit = 100
+    offset = 0
+
+    while len(all_orders) < max_orders:
+        time.sleep(0.4)
+
+        endpoint = f"onlineordering/order?offset={offset}&amount={limit}"
+        chunk = lightspeed_get(endpoint, location=location)
+
+        if isinstance(chunk, dict):
+            results = chunk.get("results", [])
+            if not results:
+                break
+            all_orders.extend(results)
+
+        elif isinstance(chunk, list):
+            if not chunk:
+                break
+            all_orders.extend(chunk)
+
+        else:
+            break
+
+        offset += limit
+
+    saved_orders = []
+    skipped_count = 0
+    detail_failures = 0
+
+    for order_data in all_orders:
+        if not isinstance(order_data, dict):
+            skipped_count += 1
+            continue
+
+        order_id = order_data.get("id")
+        if not order_id:
+            skipped_count += 1
+            continue
+
+        if LightspeedOrder.objects.filter(id=order_id).exists():
+            skipped_count += 1
+            continue
+
+        try:
+            try:
+                time.sleep(0.4)
+                detail_payload = lightspeed_get(
+                    f"onlineordering/order/{order_id}",
+                    location=location
+                )
+                if isinstance(detail_payload, dict):
+                    order_data = detail_payload
+            except Exception as detail_exc:
+                detail_failures += 1
+                logger.warning(
+                    "Detail fetch failed for order %s: %s",
+                    order_id,
+                    detail_exc
+                )
+
+            defaults = _map_order_to_model_fields(order_data, location)
+
+            order_obj, _ = LightspeedOrder.objects.update_or_create(
+                id=order_id,
+                defaults=defaults
+            )
+            saved_orders.append(order_obj)
+
+        except Exception as e:
+            logger.error("Error saving order %s: %s", order_id, str(e))
+            skipped_count += 1
+
+    duration = time.time() - start
+
+    return {
+        "location": location,
+        "total_fetched": len(all_orders),
+        "total_saved": len(saved_orders),
+        "skipped": skipped_count,
+        "detail_failures": detail_failures,
+        "duration": duration,
+        "saved_orders": saved_orders,
+    }

@@ -60,8 +60,8 @@ class PaymentRequiredMiddleware:
             check = checkPayment(user.id)
             paid = check.get("paid", False)
             payment_status = check.get("payment_status", False)
-            # if not (payment_status and paid):
-            #     return HttpResponseForbidden("Payment Required")
+            if not (payment_status and paid):
+                return HttpResponseForbidden("Payment Required")
             return self.get_response(request)
             
 
